@@ -25,7 +25,6 @@ class Experience(Base):
   description = Column(Text)
   start = Column(Date)
   end = Column(Date)
-  skills = relationship('Skill')
 
 class Education(Base):
   __tablename__ = 'educations'

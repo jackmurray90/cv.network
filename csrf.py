@@ -2,7 +2,7 @@ from flask import request, abort, make_response, render_template, redirect
 from util import random_128_bit_string
 from sqlalchemy.orm import Session
 from db import User
-from translations import tr, accepted_languages
+from translations import tr, accepted_languages, default_language
 
 def csrf(app, engine):
   def get(path):
@@ -19,7 +19,7 @@ def csrf(app, engine):
         csrf = f'<input type="hidden" name="csrf" value="{api_key}"/>'
         language = request.cookies.get('language')
         if language not in accepted_languages:
-          language = request.accept_languages.best_match(accepted_languages)
+          language = request.accept_languages.best_match(accepted_languages) or default_language
         def rt(p, **kwargs):
           if 'message' not in kwargs:
             kwargs['message'] = request.cookies.get('message')
@@ -42,7 +42,7 @@ def csrf(app, engine):
           user = None
         language = request.cookies.get('language')
         if language not in accepted_languages:
-          language = request.accept_languages.best_match(accepted_languages)
+          language = request.accept_languages.best_match(accepted_languages) or default_language
         if user and request.form['csrf'] != api_key:
           abort(403)
         def r(p, message=''):
