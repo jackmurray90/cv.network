@@ -165,7 +165,7 @@ def view_profile(render_template, session, profile):
   if view.timestamp + 60*60*24 < time():
     session.add(View(user_id=profile.id, remote_address=request.remote_addr, timestamp=int(time())))
     session.commit()
-  return render_template('view.html', profile=profile, profile_picture_exists=isfile(f'static/profile_pictures/{user.id}'))
+  return render_template('view.html', profile=profile, profile_picture_exists=isfile(f'static/profile_pictures/{profile.id}'))
 
 def log_referrer():
   try:
