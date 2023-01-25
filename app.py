@@ -58,19 +58,19 @@ def referrers(render_template, user, tr):
   with Session(engine) as session:
     return render_template('referrers.html', referrers=session.query(Referrer).order_by(Referrer.count.desc()).all())
 
-@get('/register')
-def register(render_template, user, tr):
+@get('/sign_up')
+def sign_up(render_template, user, tr):
   if user: return redirect('/')
-  return render_template('login.html', register=True)
+  return render_template('login.html', sign_up=True)
 
-@post('/register')
-def register(redirect, user, tr):
+@post('/sign_up')
+def sign_up(redirect, user, tr):
   if user: return redirect('/')
   with Session(engine) as session:
     try:
       [user] = session.query(User).where(User.email == request.form['email'])
       if user.email_verified:
-        return redirect('/register', tr['account_already_exists'])
+        return redirect('/sign_up', tr['account_already_exists'])
     except:
       user = User(email=request.form['email'], api_key=random_128_bit_string())
       session.add(user)
@@ -79,7 +79,7 @@ def register(redirect, user, tr):
     session.add(login_code)
     session.commit()
     send_email(request.form['email'], tr['verification_email_subject'], render_template('emails/verification.html', tr=tr, code=login_code.code))
-    return redirect('/register', tr['verify_your_email'] % request.form['email'])
+    return redirect('/sign_up', tr['verify_your_email'] % request.form['email'])
 
 @get('/login/<code>')
 def login(render_template, user, tr, code):
@@ -119,7 +119,7 @@ def login(redirect, user, tr):
       return redirect('/login', tr['login_email_sent'])
     else:
       send_email(request.form['email'], tr['verification_email_subject'], render_template('emails/verification.html', tr=tr, code=login_code.code))
-      return redirect('/register', tr['verify_your_email'] % request.form['email'])
+      return redirect('/sign_up', tr['verify_your_email'] % request.form['email'])
 
 @post('/logout')
 def logout(redirect, user, tr):
