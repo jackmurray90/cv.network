@@ -11,8 +11,8 @@ def send_email(recipient, subject, content):
       server.login(SMTP_USERNAME, SMTP_PASSWORD)
       message = MIMEMultipart("alternative")
       message['Subject'] = subject
-      message['From'] = 'no-reply@factoid.ai'
+      message['From'] = 'no-reply@cv.network'
       message['To'] = recipient
       message.attach(MIMEText(content, 'html'))
-      server.sendmail("no-reply@factoid.ai", recipient, message.as_string())
+      server.sendmail("no-reply@cv.network", recipient, message.as_string())
   Thread(target=thread).start()
