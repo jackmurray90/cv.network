@@ -23,7 +23,9 @@ def csrf(app, engine):
         def rt(p, **kwargs):
           if 'message' not in kwargs:
             kwargs['message'] = request.cookies.get('message')
-          response = make_response(render_template(p, tr=tr[language], csrf=csrf, user=user, **kwargs))
+          if 'user' not in kwargs:
+            kwargs['user'] = user
+          response = make_response(render_template(p, tr=tr[language], csrf=csrf, **kwargs))
           response.set_cookie('message', '', expires=0)
           return response
         return f(rt, user, tr[language], *args, **kwargs)

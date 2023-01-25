@@ -1,13 +1,32 @@
 {% extends 'base.html' %}
+{% block head %}
+  <script>
+    function add_experience() {
+    }
+  </script>
+{% endblock %}
 {% block content %}
 <div id="content">
   <form action="/set_username" method="post">
     {{ csrf|safe }}
-    <p>{{ tr['username'] }}: <input name="username" value="{{ user.username }}"/></p>
-    <p><input type="submit" value="{{ tr['claim_username'] }}"/></p>
+    <p>{{ tr['username'] }}: <input name="username" value="{{ user.username }}"/> <input disabled type="submit" value="{{ tr['claim_username'] }}"/></p>
   </form>
   <form action="/edit" method="post">
     {{ csrf|safe }}
     <p>{{ tr['name'] }}: <input name="name" value="{{ user.name }}"/></p>
+    <h2>{{ tr['experience'] }}</h2>
+    <ul id='experiences'>
+      {% for experience in user.experiences %}
+        <li>
+          <p>{{ tr['company'] }}: <input name='experience_name' value="{{ experience.name }}"/></p>
+          <p>{{ tr['url'] }}: <input name='experience_url' value="{{ experience.url }}"/></p>
+          <p>{{ tr['description'] }}:<br/><textarea class="wide" name='experience_description'>{{ experience.description }}</textarea></p>
+          <p>{{ tr['start_month'] }}: <input name="experience_start" value="{{ experience.start|render_month }}"/></p>
+          <p>{{ tr['end_month'] }}: <input name="experience_end" value="{{ experience.end|render_month }}"/></p>
+        </li>
+      {% endfor %}
+    </ul>
+    <p><button type="button" onClick="add_experience()">{{ tr['add_experience'] }}</button></p>
+  </form>
 </div>
 {% endblock %}

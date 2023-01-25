@@ -35,6 +35,10 @@ def calculate_duration_in_months(experience, tr):
     components.append(f'{delta.months} {tr["months"]}')
   return f'({" ".join(components)})'
 
+@app.template_filter()
+def render_month(date):
+  return '%02d/%04d' % (date.month, date.year)
+
 @get('/')
 def landing_page(render_template, user, tr):
   log_referrer()
@@ -126,9 +130,14 @@ def logout(redirect, user, tr):
   return response
 
 @get('/edit')
-def settings(render_template, user, tr):
+def edit(render_template, user, tr):
   if not user: return redirect('/')
-  return render_template('edit.html')
+  with Session(engine) as session:
+    [user] = session.query(User).where(User.id == user.id)
+    user.experiences
+    user.educations
+    user.socials
+    return render_template('edit.html', user=user)
 
 @post('/edit')
 def edit(redirect, user, tr):
