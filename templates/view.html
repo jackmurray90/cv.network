@@ -1,0 +1,59 @@
+{% if user and profile.id == user.id %}
+  <div id="nav">
+    <a href="/edit">{{ tr['edit'] }}</a>
+    {% if user.admin %}
+      <a href="/referrers">{{ tr['referrers'] }}</a>
+    {% endif %}
+    <form action="/logout" method="post">
+      {{ csrf|safe }}
+      <input type="submit" value="{{ tr['logout'] }}"/>
+    </form>
+  </div>
+{% endif %}
+<div id="content">
+  <h1>
+    {% if profile_picture_exists %}
+      <img id="profile-picture" src="/profile_pictures/{{ profile.id }}.png"/>
+    {% endif %}
+    {% if profile.name %}
+      {{ profile.name }}
+    {% else %}
+      &lt;Your Name&gt;
+    {% endif %}
+  </h1>
+
+  {% if profile.experiences %}
+    <h2>{{ tr['experience'] }}</h2>
+    <ul>
+      {% for experience in profile.experiences %}
+        <li>
+          {% if experience.url %}
+            <a href="{{ experience.url }}">{{ experience.name }}</a>
+          {% else %}
+            {{ experience.name }}
+          {% endif %}
+          {{ experience|calculate_duration_in_months(tr) }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if profile.educations %}
+    <h2>{{ tr['education'] }}</h2>
+
+    {% for education in profile.educations %}
+      <p>{{ education.institution }}<br/>{{ education.qualification }} {{ education|calculate_duration_in_months(tr) }}</p>
+    {% endfor %}
+  {% endif %}
+
+  {% if profile.socials %}
+    <h2>{{ tr['socials'] }}</h2>
+    <ul>
+      {% for social in profile.socials %}
+        <li>{{ social.platform }}: <a href="{{ social.url }}">{{ social.display_value }}</a></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</div>
+
+</div>

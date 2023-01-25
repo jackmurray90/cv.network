@@ -1,51 +1,54 @@
 from flask import Flask, request, redirect, abort, render_template, make_response
 from csrf import csrf
 from util import random_128_bit_string
-from hashlib import sha256
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
-from config import DATABASE, OPENAI_API_KEY
-from db import Question, Referrer, User, LoginCode, View
-from threading import Thread
-from mistune import create_markdown
-from time import time, sleep
+from config import DATABASE
+from db import User, Experience, Education, Social, LoginCode, Referrer, View
+from time import time
 from mail import send_email
-from bitcoin import validate_address
+from os.path import isfile
+from dateutil.relativedelta import relativedelta
 import re
-import openai
 
 app = Flask(__name__)
 engine = create_engine(DATABASE)
-openai.api_key = OPENAI_API_KEY
-markdown = create_markdown()
 get, post = csrf(app, engine)
 
-slug_special_chars = '?.,/&!?\'"<>'
-
-def is_valid_slug(slug):
-  return len(slug) >= 1 and len(slug) <= 300 and not re.search(f'[{slug_special_chars}]', slug)
-
-def make_slug(question):
-  return re.sub('\s+', '-', re.sub(f'[{slug_special_chars}]', '', question)).lower()
-
-def hash(salt, s):
-  return sha256((salt + s).encode('utf-8')).hexdigest()
+@app.template_filter()
+def calculate_duration_in_months(experience, tr):
+  if not experience.start or not experience.end:
+    return ''
+  delta = relativedelta(experience.end, experience.start)
+  delta.months += 1
+  if delta.months == 12:
+    delta.years += 1
+    delta.months = 0
+  components = []
+  if delta.years == 1:
+    components.append(f'1 {tr["year"]}')
+  elif delta.years > 1:
+    components.append(f'{delta.years} {tr["years"]}')
+  if delta.months == 1:
+    components.append(f'1 {tr["month"]}')
+  elif delta.months > 1:
+    components.append(f'{delta.months} {tr["months"]}')
+  return f'({" ".join(components)})'
 
 @get('/')
-def new_question(render_template, user, tr):
+def landing_page(render_template, user, tr):
   log_referrer()
-  with Session(engine) as session:
-    return render_template('new_question.html', questions=session.query(Question).order_by(Question.id.desc()).limit(20).all())
-
-@get('/about')
-def about(render_template, user, tr):
-  log_referrer()
-  return render_template('about.html')
+  if user:
+    if user.username:
+      return redirect(f'/{user.username}')
+    else:
+      return redirect(f'/{user.id}')
+  return render_template('landing_page.html')
 
 @get('/sitemap.xml')
 def sitemap(render_template, user, tr):
   with Session(engine) as session:
-    response = render_template('sitemap.xml', questions=session.query(Question).all())
+    response = render_template('sitemap.xml', users=session.query(User).all())
     response.headers['Content-Type'] = 'text/xml'
     return response
 
@@ -125,137 +128,44 @@ def logout(redirect, user, tr):
   response.set_cookie('api_key', '', expires=0)
   return response
 
-@get('/settings')
+@get('/edit')
 def settings(render_template, user, tr):
   if not user: return redirect('/')
-  return render_template('settings.html')
+  return render_template('edit.html')
 
-@post('/settings')
-def settings(redirect, user, tr):
+@post('/edit')
+def edit(redirect, user, tr):
   if not user: return redirect('/')
-  if not validate_address(request.form['payout_address']):
-    return redirect('/settings', tr['invalid_address'])
-  with Session(engine) as session:
-    [user] = session.query(User).where(User.id == user.id)
-    user.payout_address = request.form['payout_address']
-    session.commit()
-  return redirect('/settings', tr['address_saved'])
+  return "TODO: actually edit the user from the form submitted"
 
-@post('/')
-def new_question(redirect, user, tr):
-  q = request.form['question'].strip()
-  slug = make_slug(q)
-  if not is_valid_slug(slug):
-    return redirect('/', tr['invalid_question'])
-  if len(q) > 300:
-    return redirect('/', tr['question_too_long'])
-  with Session(engine) as session:
-    try:
-      [question] = session.query(Question).where(Question.slug == slug)
-      return redirect(f'/question/{slug}', tr['question_exists'])
-    except:
-      pass
-    question = Question(user_id=None if not user else user.id, question=q, slug=slug, answer=None)
-    session.add(question)
-    session.commit()
-  def target():
-    with Session(engine) as session:
-      try:
-        [question] = session.query(Question).where(Question.slug == slug)
-      except:
-        return
-      for i in range(5):
-        try:
-          question.answer = openai.Completion.create(model="text-davinci-003", prompt='Write a blog post answering the following question: ' + q, max_tokens=1024, temperature=0)["choices"][0]["text"]
-          break
-        except:
-          sleep(5)
-      if not question.answer:
-        question.answer = tr['error_generating_answer']
-      session.commit()
-  Thread(target=target).start()
-  return redirect(f"/question/{slug}")
-
-@get('/browse')
-def browse(render_template, user, tr):
-  with Session(engine) as session:
-    return render_template('browse.html', questions=session.query(Question).order_by(Question.id.desc()).all())
-
-@get('/mine')
-def mine(render_template, user, tr):
-  if not user: return redirect('/')
-  with Session(engine) as session:
-    return render_template('browse.html', questions=session.query(Question).where(Question.user_id == user.id).order_by(Question.id.desc()).all())
-
-@get('/article/<slug>')
-def question(render_template, user, tr, slug):
+@get('/<int:id>')
+def view(render_template, user, tr, id):
   log_referrer()
-  if not is_valid_slug(slug): abort(404)
-  return redirect(f'/question/{slug}')
+  with Session(engine) as session:
+    try:
+      [profile] = session.query(User).where(User.id == id)
+    except:
+      abort(404)
+    return view_profile(render_template, session, profile)
 
-@get('/question/<slug>')
-def question(render_template, user, tr, slug):
+@get('/<username>')
+def view(render_template, user, tr, username):
   log_referrer()
-  if not is_valid_slug(slug): abort(404)
   with Session(engine) as session:
     try:
-      [question] = session.query(Question).where(Question.slug == slug)
+      [profile] = session.query(User).where(User.username == username)
     except:
       abort(404)
-    view = session.query(View).filter((View.question_id == question.id) & (View.remote_address == request.remote_addr)).first()
-    if view is None:
-      view = View(question_id=question.id, remote_address=request.remote_addr, timestamp=0)
-    if view.timestamp + 60*60*24 < time():
-      session.add(View(question_id=question.id, remote_address=request.remote_addr, timestamp=int(time())))
-      session.commit()
-    html = markdown(question.answer)
-    return render_template('question.html', question=question, html=html)
+    return view_profile(render_template, session, profile)
 
-@get('/question/<slug>/ready')
-def question_ready(render_template, user, tr, slug):
-  if not is_valid_slug(slug): abort(404)
-  with Session(engine) as session:
-    try:
-      [question] = session.query(Question).where(Question.slug == slug)
-    except:
-      abort(404)
-    return {'ready': question.answer is not None}
-
-@post('/question/<slug>')
-def question(redirect, user, tr, slug):
-  if not user or not user.admin: return redirect('/')
-  if not is_valid_slug(slug): abort(404)
-  with Session(engine) as session:
-    try:
-      [question] = session.query(Question).where(Question.slug == slug)
-    except:
-      abort(404)
-    try:
-      [new_question] = session.query(Question).where(Question.slug == request.form['slug'])
-      if new_question.id != question.id:
-        return redirect(f'/question/{slug}', tr['another_question_slug_exists'])
-    except:
-      pass
-    if not is_valid_slug(request.form['slug']):
-      return redirect(f'/question/{slug}', tr['invalid_slug'])
-    question.question = request.form['question']
-    question.slug = request.form['slug']
-    question.answer = request.form['answer']
+def view_profile(render_template, session, profile):
+  view = session.query(View).filter((View.user_id == profile.id) & (View.remote_address == request.remote_addr)).first()
+  if view is None:
+    view = View(user_id=profile.id, remote_address=request.remote_addr, timestamp=0)
+  if view.timestamp + 60*60*24 < time():
+    session.add(View(user_id=profile.id, remote_address=request.remote_addr, timestamp=int(time())))
     session.commit()
-    return redirect(f"/question/{request.form['slug']}", tr['edits_were_saved'])
-
-@post('/question/<slug>/delete')
-def question_delete(redirect, user, tr, slug):
-  if not user or not user.admin: return redirect('/')
-  if not is_valid_slug(slug): abort(404)
-  with Session(engine) as session:
-    try:
-      [question] = session.query(Question).where(Question.slug == slug)
-    except:
-      abort(404)
-    session.delete(question)
-    session.commit()
-    return redirect('/', tr['question_deleted'])
+  return render_template('view.html', profile=profile, profile_picture_exists=isfile(f'static/profile_pictures/{user.id}'))
 
 def log_referrer():
   try:

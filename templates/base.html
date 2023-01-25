@@ -1,55 +1,23 @@
 <!doctype html>
 <style>
-  @font-face {
-    font-family: Header;
-    src: url(/Philosopher-Regular.ttf);
-  }
   * { box-sizing: border-box; }
-  html { background-color: #eee; color: #222; }
-  body { text-align: center; font-family: arial; }
+  html { background-color: #fff; color: #222; }
   h1 { font-weight: lighter; font-family: Header; letter-spacing: 0.2em; font-variant: small-caps; }
-  h1 a, h1 a:hover, h1 a:visited { color: #222; }
-  table { border-collapse: collapse; margin: 1em auto; }
-  th, td { border: 1px solid #ddd; padding: 0.5em; }
+  #profile-picture { vertical-align: middle; border-radius: 50%; margin-right: 0.5em; }
+  a, a:hover, a:visited { color: #369; text-decoration: none; }
+  #content { margin: 0 auto; max-width: 60em; padding: 0 1em; }
   .center { text-align: center; }
   input.wide { width: 100%; }
   input, textarea { padding: 1em; }
-  #content { max-width: 42em; text-align: left; margin: 0 auto; padding: 0 1em; }
-  #content.border { border-left: 1px solid #ccc; }
-  a, a:hover, a:visited { color: rgb(32, 80, 162); text-decoration: none; }
-  #nav { margin-top: 1em; }
+  #nav { padding-top: 1em; margin-top: 0; background-color: #123; }
   #nav a { padding: 0 2em; white-space: nowrap; }
   #nav form { display: inline; }
-  #nav input { white-space: nowrap; font-size: 16px; background-color: transparent; border: none; color: rgb(32, 80, 162); padding: 0 2em; cursor: pointer; }
+  #nav input { white-space: nowrap; font-size: 16px; background-color: transparent; border: none; color: #369); padding: 0 2em; cursor: pointer; }
 </style>
-<meta name="description" content="Factoid.info - Questions and answers."/>
+<meta name="description" content="CV Network: Showcase your work."/>
 <meta name=”robots” content="index, follow"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="keywords" content="Questions, Answers, Blog"/>
 <meta charset="UTF-8"/>
 {% block head %}{% endblock %}
-<title>Factoid</title>
-<div id="nav">
-  <a href="/">{{ tr['new_question'] }}</a>
-  <a href="/browse">{{ tr['browse_questions'] }}</a>
-  {% if user %}
-    <a href="/mine">{{ tr['my_questions'] }}</a>
-    {% if user.admin %}
-      <a href="/referrers">{{ tr['referrers'] }}</a>
-    {% endif %}
-    <a href="/settings">{{ tr['settings'] }}</a>
-    <a href="/about">{{ tr['about'] }}</a>
-    <form action="/logout" method="post">
-      {{ csrf|safe }}
-      <input type="submit" value="{{ tr['logout'] }}"/>
-    </form>
-  {% else %}
-    <a href="/about">{{ tr['about'] }}</a>
-    <a href="/register">{{ tr['sign_up'] }}</a>
-    <a href="/login">{{ tr['login'] }}</a>
-  {% endif %}
-</div>
-<h1>Factoid</h1>
-<div id="content" class="{% block border %}{% endblock %}">
+<title>{% block title %}CV Network{% endblock %}</title>
 {% block content %}{% endblock %}
-</div>
