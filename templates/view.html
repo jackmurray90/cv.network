@@ -1,17 +1,5 @@
 {% extends 'base.html' %}
 {% block content %}
-{% if user and profile.id == user.id %}
-  <div id="nav">
-    <a href="/edit">{{ tr['edit'] }}</a>
-    {% if user.admin %}
-      <a href="/referrers">{{ tr['referrers'] }}</a>
-    {% endif %}
-    <form action="/logout" method="post">
-      {{ csrf|safe }}
-      <input type="submit" value="{{ tr['logout'] }}"/>
-    </form>
-  </div>
-{% endif %}
 <div id="content">
   <h1>
     {% if profile_picture_exists %}

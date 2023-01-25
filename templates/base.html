@@ -21,4 +21,16 @@
 <meta charset="UTF-8"/>
 {% block head %}{% endblock %}
 <title>{% block title %}CV Network{% endblock %}</title>
+{% if user and (not profile or profile.id == user.id) %}
+  <div id="nav">
+    <a href="/edit">{{ tr['edit'] }}</a>
+    {% if user.admin %}
+      <a href="/referrers">{{ tr['referrers'] }}</a>
+    {% endif %}
+    <form action="/logout" method="post">
+      {{ csrf|safe }}
+      <input type="submit" value="{{ tr['logout'] }}"/>
+    </form>
+  </div>
+{% endif %}
 {% block content %}{% endblock %}
