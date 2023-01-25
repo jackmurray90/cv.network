@@ -8,6 +8,7 @@ class User(Base):
   id = Column(Integer, primary_key=True)
   name = Column(String, default='')
   username = Column(String)
+  open = Column(Boolean, default=False)
   api_key = Column(String)
   email = Column(String)
   email_verified = Column(Boolean, default=False)
