@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
 {% if user and profile.id == user.id %}
   <div id="nav">
     <a href="/edit">{{ tr['edit'] }}</a>
@@ -55,5 +57,4 @@
     </ul>
   {% endif %}
 </div>
-
-</div>
+{% endblock %}
