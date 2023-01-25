@@ -39,10 +39,7 @@ def calculate_duration_in_months(experience, tr):
 def landing_page(render_template, user, tr):
   log_referrer()
   if user:
-    if user.username:
-      return redirect(f'/{user.username}')
-    else:
-      return redirect(f'/{user.id}')
+    return redirect('/edit')
   return render_template('landing_page.html')
 
 @get('/sitemap.xml')
