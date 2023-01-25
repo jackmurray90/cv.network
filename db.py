@@ -7,7 +7,7 @@ class User(Base):
   __tablename__ = 'users'
   id = Column(Integer, primary_key=True)
   name = Column(String, default='')
-  username = Column(String)
+  username = Column(String, default='')
   open = Column(Boolean, default=False)
   api_key = Column(String)
   email = Column(String)
