@@ -1,1 +1,13 @@
-Todo: edit template here
+{% extends 'base.html' %}
+{% block content %}
+<div id="content">
+  <form action="/set_username" method="post">
+    {{ csrf|safe }}
+    <p>{{ tr['username'] }}: <input name="username" value="{{ user.username }}"/></p>
+    <p><input type="submit" value="{{ tr['claim_username'] }}"/></p>
+  </form>
+  <form action="/edit" method="post">
+    {{ csrf|safe }}
+    <p>{{ tr['name'] }}: <input name="name" value="{{ user.name }}"/></p>
+</div>
+{% endblock %}

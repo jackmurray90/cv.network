@@ -1,7 +1,10 @@
 tr = {
   'en': {
     'email_address': "E-mail Address",
+    'brief': 'Easily put together a CV that can be shared online.',
     'login': "Log In",
+    'log_in': 'log in',
+    'or': 'or',
     'edit': "Edit CV",
     'experience': 'Experience',
     'month': 'month',
@@ -10,6 +13,9 @@ tr = {
     'years': 'years',
     'education': "Education",
     'socials': "Socials",
+    'username': 'Username',
+    'name': 'Name',
+    'claim_username': 'Claim username',
     'verification_email_subject': 'Verify your e-mail.',
     'verify_your_email': 'Please verify your e-mail by clicking the link we sent to %s.',
     'verification_email_header': 'Welcome to CV Network',
@@ -26,7 +32,7 @@ tr = {
     'login_code_expired': 'Login link expired. Please try logging in again.',
     'referrers': "Referrers",
     'logout': "Logout",
-    'sign_up': "Sign Up"
+    'sign_up': "Sign up"
   }
 }
 
