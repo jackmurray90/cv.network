@@ -1,16 +1,4 @@
 {% extends 'base.html' %}
-{% block head %}
-  <script>
-    function toggle_skills() {
-      const skills = document.getElementsByClassName("skills");
-      const class_name = skills[0].classList.contains("hide") ? "skills" : "skills hide";
-      for (let i = 0; i < skills.length; i++) {
-        skills[i].className = class_name;
-      }
-      return false;
-    }
-  </script>
-{% endblock %}
 {% block content %}
 <div id="content">
   <h1>
@@ -41,8 +29,7 @@
   {% endif %}
 
   {% if skills %}
-    <p><a href="#" onClick="return toggle_skills();">{{ tr['toggle_skills'] }}</a></p>
-    <h2 class="skills">{{ tr['skills'] }}</h2>
+    <h2>{{ tr['skills'] }}</h2>
     <p class="skills">
       {% for skill in skills %}
         <span>{{ skill.name }}</span>
