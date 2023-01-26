@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block head %}
   <style>
-    th, .nowrap { white-space: nowrap; }
+    .nowrap { white-space: nowrap; }
   </style>
   <script>
     function check_username() {
@@ -39,7 +39,7 @@
     <table class="wide">
       <tr><th>{{ tr['name'] }}</th><td><input name="name" maxlength="80" value="{{ user.name }}"/></td></tr>
       <tr><th>{{ tr['phone_optional'] }}</th><td><input name="phone" maxlength="80" value="{{ user.phone }}"/></td></tr>
-      <tr><th>{{ tr['summary'] }}</th><td class="wide"><textarea name="summary" class="wide" maxlength="1000">{{ user.summary }}</textarea></td></tr>
+      <tr><th>{{ tr['profile_summary'] }}</th><td class="wide"><textarea name="summary" class="wide" maxlength="1000">{{ user.summary }}</textarea></td></tr>
       <tr><th>{{ tr['email_address'] }}</th><td>{{ user.email }} <span class="nowrap"><input {% if user.show_email %}checked{% endif %} type="checkbox" name="show_email" value="true"/> {{ tr['show_email'] }}</span></td></tr>
       <tr><th>{{ tr['open_to_work'] }}</th><td><input {% if user.open %}checked{% endif %} type="checkbox" name="open" value="true"/></td></tr>
     </table>
