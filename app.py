@@ -57,9 +57,9 @@ def calculate_duration_in_months(experience, tr):
   return f'({" ".join(components)})'
 
 @app.template_filter()
-def render_month(date):
+def render_date(date):
   if not date: return ''
-  return '%02d/%04d' % (date.month, date.year)
+  return '%04d-%02d-%02d' % (date.year, date.month, date.day)
 
 @app.template_filter()
 def render_skills(skills):
@@ -206,6 +206,7 @@ def experience(render_template, user, tr, id):
       experience = Experience()
       experience.name = ''
       experience.url = ''
+      experience.position = ''
       experience.description = ''
     else:
       try:
@@ -220,6 +221,7 @@ def experience(render_template, user, tr, id):
 def experience(redirect, user, tr, id):
   if not user: return redirect('/')
   if len(request.form['name']) > 80: abort(400)
+  if len(request.form['position']) > 80: abort(400)
   if len(request.form['url']) > 80: abort(400)
   if len(request.form['description']) > 1000: abort(400)
   if len(request.form['skills']) > 1000: abort(400)
@@ -227,10 +229,11 @@ def experience(redirect, user, tr, id):
     start = convert_date(request.form['start'])
     end = convert_date(request.form['end'])
   except:
+    print("aborting")
     abort(400)
   with Session(engine) as session:
     if id == 'new':
-      experience = Experience(user_id=user.id, name=request.form['name'], url=make_url(request.form['url']), description=request.form['description'], start=start, end=end)
+      experience = Experience(user_id=user.id, name=request.form['name'], position=request.form['position'], url=make_url(request.form['url']), description=request.form['description'], start=start, end=end)
       session.add(experience)
       session.commit()
       for skill_name in request.form['skills'].split(","):
@@ -245,6 +248,7 @@ def experience(redirect, user, tr, id):
       if experience.user_id != user.id:
         abort(403)
       experience.name = request.form['name']
+      experience.position = request.form['position']
       experience.url = request.form['url']
       experience.description = request.form['description']
       experience.start = start

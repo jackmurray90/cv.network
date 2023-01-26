@@ -25,6 +25,7 @@ class Experience(Base):
   id = Column(Integer, primary_key=True)
   user_id = Column(Integer, ForeignKey('users.id'))
   name = Column(String, default='')
+  position = Column(String, default='')
   url = Column(String, default='')
   description = Column(Text, default='')
   start = Column(Date)

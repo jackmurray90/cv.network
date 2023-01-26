@@ -53,6 +53,9 @@
       {% for experience in profile.experiences %}
         <li>
           <h3>
+            {% if experience.position %}
+              {{ experience.position }} {{ tr['for'] }}
+            {% endif %}
             {% if experience.url %}
               <a href="{{ experience.url }}">{{ experience.name }}</a>
             {% else %}
