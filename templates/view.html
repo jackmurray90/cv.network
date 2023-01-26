@@ -8,34 +8,40 @@
     {% if profile.name %}
       {{ profile.name }}
     {% endif %}
+    {% if user and profile.id == user.id %}
+      <a class="edit" href="/cv/edit-basic-info">{{ tr['edit_basic_info'] }}</a>
+    {% endif %}
   </h1>
 
   {% if skills %}
     <h2>Skills</h2>
-    <p>
+    <p class="skills">
       {% for skill in skills %}
-        <span class='skill'>{{ skill.name }}</span>
+        <span>{{ skill.name }}</span>
       {% endfor %}
     </p>
   {% endif %}
 
-  {% if profile.experiences %}
-    <h2>{{ tr['experience'] }}</h2>
+  {% if profile.experiences or (user and user.id == profile.id) %}
+    <h2>{{ tr['experience'] }} <a class="edit" href="/cv/experience/new">{{ tr['new_experience'] }}</a></h2>
     <ul>
       {% for experience in profile.experiences %}
         <li>
-          <p>
+          <h3>
             {% if experience.url %}
               <a href="{{ experience.url }}">{{ experience.name }}</a>
             {% else %}
               {{ experience.name }}
             {% endif %}
             {{ experience|calculate_duration_in_months(tr) }}
-          </p>
+            {% if user and profile.id == user.id %}
+              <a class="edit" href="/cv/experience/{{ experience.id }}">{{ tr['edit_experience'] }}</a>
+            {% endif %}
+          </h3>
           {% if experience.skills %}
-            <p>
+            <p class="skills">
               {% for skill in experience.skills %}
-                <span class='skill'>{{ skill.name }}</span>
+                <span>{{ skill.name }}</span>
               {% endfor %}
             </p>
           {% endif %}
@@ -47,27 +53,27 @@
     </ul>
   {% endif %}
 
-  {% if profile.educations %}
-    <h2>{{ tr['education'] }}</h2>
-
+  {% if profile.educations or (user and user.id == profile.id) %}
+    <h2>{{ tr['education'] }} <a class="edit" href="/cv/education/new">{{ tr['new_education'] }}</a></h2>
     <ul>
       {% for education in profile.educations %}
         <li>
-          <p>{{ education.institution }}</p>
+          <h3>{{ education.institution }} <a class="edit" href="/cv/education/{{ education.id }}">{{ tr['edit_education'] }}</a></h3>
           <p>{{ education.qualification }} {{ education|calculate_duration_in_months(tr) }}</p>
           {% if education.skills %}
-            <p>
+            <p class="skills">
               {% for skill in education.skills %}
-                <span class='skill'>{{ skill.name }}</span>
+                <span>{{ skill.name }}</span>
               {% endfor %}
             </p>
           {% endif %}
         </li>
       {% endfor %}
+    </ul>
   {% endif %}
 
-  {% if profile.socials %}
-    <h2>{{ tr['socials'] }}</h2>
+  {% if profile.socials or (user and user.id == profile.id) %}
+    <h2>{{ tr['social_media'] }} <a class="edit" href="/cv/social-media">{{ tr['edit_social_media'] }}</h2>
     <ul>
       {% for social in profile.socials %}
         <li><a href="{{ social.url }}">{{ social.name }}</a></li>

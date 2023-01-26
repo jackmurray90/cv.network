@@ -4,7 +4,7 @@ from util import random_128_bit_string
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from config import DATABASE
-from db import User, Experience, Education, Social, LoginCode, Referrer, View, Skill
+from db import User, Experience, Education, SocialMedia, LoginCode, Referrer, View, Skill
 from time import time
 from mail import send_email
 from os.path import isfile
@@ -16,8 +16,12 @@ app = Flask(__name__)
 engine = create_engine(DATABASE)
 get, post = csrf(app, engine)
 
-def valid_url(url):
-  return url.startswith("http://") or url.startswith("https://") or url.startswith("mailto:")
+def make_url(url):
+  url = url.strip()
+  if not url: return url
+  if url.startswith("http://") or url.startswith("https://"):
+    return url
+  return f'http://{url}'
 
 def convert_date(d):
   if d == '': return None
@@ -65,7 +69,9 @@ def render_skills(skills):
 def landing_page(render_template, user, tr):
   log_referrer()
   if user:
-    return redirect('/cv/edit')
+    if user.username:
+      return redirect(f'/{user.username}')
+    return redirect(f'/{user.id}')
   return render_template('landing_page.html')
 
 @get('/sitemap.xml')
@@ -151,89 +157,222 @@ def logout(redirect, user, tr):
   response.set_cookie('api_key', '', expires=0)
   return response
 
-@get('/cv/edit')
-def edit(render_template, user, tr):
-  if not user: return redirect('/')
-  with Session(engine) as session:
-    [user] = session.query(User).where(User.id == user.id)
-    return render_template('edit.html', user=user)
-
 @post('/cv/set-username')
 def set_username(redirect, user, tr):
   if not user: return redirect('/')
-  if re.search('[^a-z0-9-]', request.form['username']):
+  if re.search('[^a-z0-9-]', request.form['username']) or not re.search('[a-z]', request.form['username']):
     abort(400)
   if len(request.form['username']) > 30:
     abort(400)
   with Session(engine) as session:
     [user] = session.query(User).where(User.id == user.id)
     try:
+      if request.form['username'] == 'cv':
+        raise Exception
       user.username = request.form['username'] or None
       session.commit()
-      return redirect('/cv/edit', tr['successful_claim'] + request.form['username'])
+      return redirect('/cv/edit-basic-info', tr['successful_claim'] + request.form['username'])
     except:
-      return redirect('/cv/edit', request.form['username'] + tr['is_taken'])
+      return redirect('/cv/edit-basic-info', request.form['username'] + tr['is_taken'])
 
-@post('/cv/edit')
-def edit(redirect, user, tr):
+@get('/cv/edit-basic-info')
+def edit_basic_info(render_template, user, tr):
+  if not user: return redirect('/')
+  return render_template('edit_basic_info.html')
+
+@post('/cv/edit-basic-info')
+def edit_basic_info(redirect, user, tr):
   if not user: return redirect('/')
   if len(request.form['name']) > 80:
     abort(400)
-  for name, url, description, skills, start, end in zip(*[request.form.getlist(f'experience_{name}') for name in ['name', 'url', 'description', 'skills', 'start', 'end']]):
-    if len(name) > 80: abort(400)
-    if len(url) > 80: abort(400)
-    if not valid_url(url): abort(400)
-    if len(description) > 1000: abort(400)
-    if len(skills) > 1000: abort(400)
-    try:
-      start = convert_date(start)
-      end = convert_date(end)
-    except:
-      abort(400)
-  for institution, qualification, skills, start, end in zip(*[request.form.getlist(f'education_{name}') for name in ['institution', 'qualification', 'skills', 'start', 'end']]):
-    if len(institution) > 80: abort(400)
-    if len(qualification) > 80: abort(400)
-    if len(skills) > 1000: abort(400)
-    try:
-      start = convert_date(start)
-      end = convert_date(end)
-    except:
-      abort(400)
-  for name, url in zip(*[request.form.getlist(f'social_{name}') for name in ['name', 'url']]):
-    if len(name) > 80: abort(400)
-    if len(url) > 80: abort(400)
-    if not valid_url(url): abort(400)
+  if len(request.form['phone']) > 80:
+    abort(400)
   with Session(engine) as session:
     [user] = session.query(User).where(User.id == user.id)
-    for experience in user.experiences:
-      for skill in experience.skills:
-        session.delete(skill)
-      session.delete(experience)
-    for education in user.educations:
-      for skill in education.skills:
-        session.delete(skill)
-      session.delete(education)
-    for social in user.socials:
-      session.delete(social)
     user.name = request.form['name']
-    for name, url, description, skills, start, end in zip(*[request.form.getlist(f'experience_{name}') for name in ['name', 'url', 'description', 'skills', 'start', 'end']]):
-      experience = Experience(user_id=user.id, name=name, url=url, description=description, start=convert_date(start), end=convert_date(end))
+    user.phone = request.form['phone']
+    user.show_email = 'show_email' in request.form
+    session.commit()
+    if user.username:
+      return redirect(f'/{user.username}')
+    return redirect(f'/{user.id}')
+
+@get('/cv/experience/<id>')
+def experience(render_template, user, tr, id):
+  if not user: return redirect('/')
+  with Session(engine) as session:
+    if id == 'new':
+      experience = Experience()
+    else:
+      try:
+        [experience] = session.query(Experience).where(Experience.id == id)
+      except:
+        abort(404)
+      if experience.user_id != user.id:
+        abort(403)
+    return render_template('experience.html', experience=experience)
+
+@post('/cv/experience/<id>')
+def experience(redirect, user, tr, id):
+  if not user: return redirect('/')
+  if len(request.form['name']) > 80: abort(400)
+  if len(request.form['url']) > 80: abort(400)
+  if len(request.form['description']) > 1000: abort(400)
+  if len(request.form['skills']) > 1000: abort(400)
+  try:
+    start = convert_date(request.form['start'])
+    end = convert_date(request.form['end'])
+  except:
+    abort(400)
+  with Session(engine) as session:
+    if id == 'new':
+      experience = Experience(user_id=user.id, name=request.form['name'], url=make_url(request.form['url']), description=request.form['description'], start=start, end=end)
       session.add(experience)
       session.commit()
-      for skill_name in skills.split(","):
+      for skill_name in request.form['skills'].split(","):
         if skill_name.strip():
           session.add(Skill(experience_id=experience.id, name=skill_name.strip()))
-    for institution, qualification, skills, start, end in zip(*[request.form.getlist(f'education_{name}') for name in ['institution', 'qualification', 'skills', 'start', 'end']]):
-      education = Education(user_id=user.id, institution=institution, qualification=qualification, start=convert_date(start), end=convert_date(end))
+      session.commit()
+    else:
+      try:
+        [experience] = session.query(Experience).where(Experience.id == id)
+      except:
+        abort(404)
+      if experience.user_id != user.id:
+        abort(403)
+      experience.name = request.form['name']
+      experience.url = request.form['url']
+      experience.description = request.form['description']
+      experience.start = start
+      experience.end = end
+      for skill in experience.skills:
+        session.delete(skill)
+      for skill_name in request.form['skills'].split(","):
+        if skill_name.strip():
+          session.add(Skill(experience_id=experience.id, name=skill_name.strip()))
+      session.commit()
+    if user.username:
+      return redirect(f'/{user.username}')
+    return redirect(f'/{user.id}')
+
+@post('/cv/experience/delete/<id>')
+def experience(redirect, user, tr, id):
+  if not user: return redirect('/')
+  if id != 'new':
+    with Session(engine) as session:
+      try:
+        [experience] = session.query(Experience).where(Experience.id == id)
+      except:
+        abort(404)
+      if experience.user_id != user.id:
+        abort(403)
+      for skill in experience:
+        session.delete(skill)
+      session.delete(experience)
+      session.commit()
+  if user.username:
+    return redirect(f'/{user.username}')
+  return redirect(f'/{user.id}')
+
+@get('/cv/education/<id>')
+def education(render_template, user, tr, id):
+  if not user: return redirect('/')
+  with Session(engine) as session:
+    if id == 'new':
+      education = Education()
+    else:
+      try:
+        [education] = session.query(Education).where(Education.id == id)
+      except:
+        abort(404)
+      if education.user_id != user.id:
+        abort(403)
+    return render_template('education.html', education=education)
+
+@post('/cv/education/<id>')
+def new_education(redirect, user, tr):
+  if not user: return redirect('/')
+  if len(request.form['institution']) > 80: abort(400)
+  if len(request.form['url']) > 80: abort(400)
+  if len(request.form['qualification']) > 80: abort(400)
+  if len(request.form['skills']) > 1000: abort(400)
+  try:
+    start = convert_date(request.form['start'])
+    end = convert_date(request.form['end'])
+  except:
+    abort(400)
+  with Session(engine) as session:
+    if id == 'new':
+      education = Education(user_id=user.id, institution=request.form['institution'], url=make_url(request.form['url']), qualification=request.form['qualification'], start=start, end=end)
       session.add(education)
       session.commit()
-      for skill_name in skills.split(","):
+      for skill_name in request.form['skills'].split(","):
         if skill_name.strip():
           session.add(Skill(education_id=education.id, name=skill_name.strip()))
-    for name, url in zip(*[request.form.getlist(f'social_{name}') for name in ['name', 'url']]):
-      session.add(Social(user_id=user.id, name=name, url=url))
+      session.commit()
+    else:
+      try:
+        [education] = session.query(Education).where(Education.id == id)
+      except:
+        abort(404)
+      if education.user_id != user.id:
+        abort(403)
+      education.institution = request.form['institution']
+      education.url = request.form['url']
+      education.qualification = request.form['qualification']
+      education.start = start
+      education.end = end
+      for skill in education.skills:
+        session.delete(skill)
+      for skill_name in request.form['skills'].split(","):
+        if skill_name.strip():
+          session.add(Skill(education_id=education.id, name=skill_name.strip()))
+      session.commit()
+    if user.username:
+      return redirect(f'/{user.username}')
+    return redirect(f'/{user.id}')
+
+@post('/cv/education/delete/<id>')
+def education(redirect, user, tr, id):
+  if not user: return redirect('/')
+  if id != 'new':
+    with Session(engine) as session:
+      try:
+        [education] = session.query(Education).where(Education.id == id)
+      except:
+        abort(404)
+      if education.user_id != user.id:
+        abort(403)
+      for skill in education:
+        session.delete(skill)
+      session.delete(education)
+      session.commit()
+  if user.username:
+    return redirect(f'/{user.username}')
+  return redirect(f'/{user.id}')
+
+@get('/cv/social-media')
+def social_media(render_template, user, tr):
+  if not user: return redirect('/')
+  with Session(engine) as session:
+    [user] = session.query(User).where(User.id == user.id)
+    return render_template('social_media.html')
+
+@post('/cv/social-media')
+def social_media(redirect, user, tr):
+  if not user: return redirect('/')
+  for name, url in zip(*[request.form.getlist(name) for name in ['name', 'url']]):
+    if len(name) > 80: abort(400)
+    if len(url) > 80: abort(400)
+  with Session(engine) as session:
+    for social_media in user.social_media:
+      session.delete(social_media)
+    for name, url in zip(*[request.form.getlist(name) for name in ['name', 'url']]):
+      session.add(SocialMedia(user_id=user.id, name=name, url=url))
     session.commit()
-    return redirect('/cv/edit', tr['cv_updated'])
+    if user.username:
+      return redirect(f'/{user.username}')
+    return redirect(f'/{user.id}')
 
 @get('/<int:id>')
 def view(render_template, user, tr, id):

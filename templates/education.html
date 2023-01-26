@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div id="content">
+  {% if message %}
+    <p>{{ message }}</p>
+  {% endif %}
+  <form id="form" action="/cv/experience/{{ experience.id or 'new' }}" method="post">
+    {{ csrf|safe }}
+    <table>
+      <tr><th>{{ tr['institution'] }}</th><td class='wide'><input class='wide' maxlength="80" name='institution' value="{{ education.institution }}"/></td></tr>
+      <tr><th>{{ tr['qualification'] }}</th><td class='wide'><input class='wide' maxlength="80" name='qualification' value="{{ education.qualification }}"/></td></tr>
+      <tr><th>{{ tr['skills'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='skills'>{{ education.skills|render_skills }}</textarea></td></tr>
+      <tr><th>{{ tr['start_month'] }}</th><td class='wide'><input name='start' value="{{ education.start|render_month }}"/></td></tr>
+      <tr><th>{{ tr['end_month'] }}</th><td class='wide'><input name='end' value="{{ education.end|render_month }}"/></td>
+    </table>
+    <p><input type="submit" value="{{ tr['save_education'] }}"/></p>
+  </form>
+  <form id="form" action="/cv/education/delete/{{ education.id or 'new' }}" method="post">
+    {{ csrf|safe }}
+    <p><input type="submit" value="{{ tr['delete_education'] }}"/></p>
+  </form>
+</div>
+{% endblock %}

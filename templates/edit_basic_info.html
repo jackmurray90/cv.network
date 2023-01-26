@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block head %}
+  <script>
+    function check_username() {
+      const username = document.getElementsByName('username')[0];
+      let result = '';
+      if (document.getElementsByName("username")[0].value.match(/[^a-z0-9-]/g) || !document.getElementsByName("username")[0].value.match(/[a-z]/g)) {
+        result = "{{ tr['invalid_username'] }}";
+      }
+      document.getElementById("username_error").textContent = result;
+    }
+  </script>
+{% endblock %}
+{% block content %}
+<div id="content">
+  {% if message %}
+    <p>{{ message }}</p>
+  {% endif %}
+  <table>
+    <tr>
+      <th>{{ tr['username'] }}</th>
+      <td>
+        <form action="/cv/set-username" method="post">
+          {{ csrf|safe }}
+          <input name="username" maxlength="30" onKeyUp="check_username()" value="{% if user.username %}{{ user.username }}{% endif %}"/>
+          <input type="submit" value="{{ tr['claim_username'] }}"/>
+          <span id="username_error"></span>
+        </form>
+      </td>
+    </tr>
+  </table>
+  <form id="form" action="/cv/edit-basic-info" method="post">
+    {{ csrf|safe }}
+    <table>
+      <tr><th>{{ tr['name'] }}</th><td class="wide"><input name="name" maxlength="80" value="{{ user.name }}"/></td></tr>
+      <tr><th>{{ tr['phone'] }}</th><td class="wide"><input name="phone" maxlength="80" value="{{ user.phone }}"/></td></tr>
+      <tr><th>{{ tr['email'] }}</th><td class="wide">{{ user.email }} <input type="checkbox" name="show_email" value="true"/> {{ tr['show_email'] }}</td></tr>
+    </table>
+    <p><input type="submit" value="{{ tr['save_changes'] }}"/></p>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div id="content">
+  {% if message %}
+    <p>{{ message }}</p>
+  {% endif %}
+  <form id="form" action="/cv/experience/{{ experience.id or 'new' }}" method="post">
+    {{ csrf|safe }}
+    <table>
+      <tr><th>{{ tr['company'] }}</th><td class='wide'><input class='wide' maxlength="80" name='name' value="{{ experience.name }}"/></td></tr>
+      <tr><th>{{ tr['url_optional'] }}</th><td class='wide'><input class='wide' maxlength="80" name='url' value="{{ experience.url }}"/></td></tr>
+      <tr><th>{{ tr['description'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='description'>{{ experience.description }}</textarea></td></tr>
+      <tr><th>{{ tr['skills'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='skills'>{{ experience.skills|render_skills }}</textarea></td></tr>
+      <tr><th>{{ tr['start_month'] }}</th><td class='wide'><input name='start' value="{{ experience.start|render_month }}"/></td></tr>
+      <tr><th>{{ tr['end_month'] }}</th><td class='wide'><input name='end' value="{{ experience.end|render_month }}"/></td>
+    </table>
+    <p><input type="submit" value="{{ tr['save_experience'] }}"/></p>
+  </form>
+  <form id="form" action="/cv/experience/delete/{{ experience.id or 'new' }}" method="post">
+    {{ csrf|safe }}
+    <p><input type="submit" value="{{ tr['delete_experience'] }}"/></p>
+  </form>
+</div>
+{% endblock %}

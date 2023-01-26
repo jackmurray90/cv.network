@@ -13,17 +13,19 @@ class User(Base):
   email = Column(String)
   email_verified = Column(Boolean, default=False)
   admin = Column(Boolean, default=False)
+  phone = Column(String, default='')
+  show_email = Column(Boolean, default=False)
   experiences = relationship('Experience')
   educations = relationship('Education')
-  socials = relationship('Social')
+  social_media = relationship('SocialMedia')
 
 class Experience(Base):
   __tablename__ = 'experiences'
   id = Column(Integer, primary_key=True)
   user_id = Column(Integer, ForeignKey('users.id'))
-  name = Column(String)
-  url = Column(String)
-  description = Column(Text)
+  name = Column(String, default='')
+  url = Column(String, default='')
+  description = Column(Text, default='')
   start = Column(Date)
   end = Column(Date)
   skills = relationship('Skill')
@@ -32,11 +34,11 @@ class Education(Base):
   __tablename__ = 'educations'
   id = Column(Integer, primary_key=True)
   user_id = Column(Integer, ForeignKey('users.id'))
-  institution = Column(String)
-  qualification = Column(String)
-  skills = relationship('Skill')
+  institution = Column(String, default='')
+  qualification = Column(String, default='')
   start = Column(Date)
   end = Column(Date)
+  skills = relationship('Skill')
 
 class Skill(Base):
   __tablename__ = 'skills'
@@ -45,8 +47,8 @@ class Skill(Base):
   education_id = Column(Integer, ForeignKey('educations.id'))
   name = Column(String)
 
-class Social(Base):
-  __tablename__ = 'socials'
+class SocialMedia(Base):
+  __tablename__ = 'social_media'
   id = Column(Integer, primary_key=True)
   user_id = Column(Integer, ForeignKey('users.id'))
   name = Column(String)

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block head %}
+  <style>
+    li { list-style-type: none; }
+    ul, li { margin: 0; padding: 0; }
+  </style>
+  <script>
+    function add_social_media() {
+      const table = document.getElementById('social_media');
+      const tr = document.createElement("tr");
+      tr.innerHTML = "<td><input class='wide' maxlength='80' name='name'/></td>" +
+          "<td><input class='wide' maxlength='80' name='url'/></td>" +
+          "<td><button type='button' onClick='remove(this)'>{{ tr['delete_social_media'] }}</td>";
+      table.appendChild(tr);
+    }
+    function remove(remove_button) {
+      remove_button.parentNode.parentNode.remove();
+    }
+  </script>
+{% endblock %}
+{% block content %}
+<div id="content">
+  {% if message %}
+    <p>{{ message }}</p>
+  {% endif %}
+  <form id="form" action="/cv/social-media" method="post">
+    {{ csrf|safe }}
+    <table class="wide" id='social_media'>
+      <tr><th>{{ tr['platform_name'] }}</th><th>{{ tr['url'] }}</th><th>Delete</th></tr>
+      {% for social in user.social_media %}
+        <tr>
+          <td><input class="wide" maxlength="80" name='name' value="{{ social.name }}"/></td>
+          <td><input class='wide' maxlength="80" name='url' value="{{ social.url }}"/></td>
+          <td><button type="button" onClick="remove(this)">{{ tr['delete_social_media'] }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+    <p><button type="button" onClick="add_social_media()">{{ tr['add_social_media'] }}</button></p>
+    <p><input type="submit" value="{{ tr['save_social_media'] }}"/></p>
+  </form>
+</div>
+{% endblock %}
