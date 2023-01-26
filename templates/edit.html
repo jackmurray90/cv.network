@@ -89,17 +89,11 @@
       if (document.getElementsByName("username")[0].value.match(/[^a-z0-9-]/g)) {
         result = "{{ tr['invalid_username'] }}";
       }
-      document.getElementById("username_result").textContent = result;
-    }
-    async function set_username() {
-      const form = document.getElementById('form');
-      const data = new URLSearchParams(new FormData(form));
-      const response = await fetch("/cv/set-username", { method: "post", body: data });
-      const json = await response.json();
-      document.getElementById("username_result").textContent = json['result'];
+      document.getElementById("username_error").textContent = result;
     }
     async function submit_form(form) {
       const data = new URLSearchParams(new FormData(form));
+      alert(data.getAll('submit'));
       const dates = data.getAll('experience_start')
           .concat(data.getAll('experience_end'))
           .concat(data.getAll('education_start'))
@@ -107,7 +101,7 @@
       for (let i = 0; i < dates.length; i++) {
         if (!valid_date(dates[i])) {
           alert('{{ tr["invalid_date"] }}: ' + dates[i]);
-          return;
+          return false;
         }
       }
       const urls = data.getAll('experience_url')
@@ -115,28 +109,34 @@
       for (let i = 0; i < urls.length; i++) {
         if (!valid_url(urls[i])) {
           alert('{{ tr["invalid_url"] }}: ' + urls[i]);
-          return;
+          return false;
         }
       }
-      const response = await fetch("/cv/edit", { method: "post", body: data });
-      const json = await response.json();
-      document.getElementById("form_result").textContent = json['result'];
+      return true;
     }
   </script>
 {% endblock %}
 {% block content %}
 <div id="content">
-  <form id="form" onSubmit="submit_form(this); return false;">
+  {% if message %}
+    <p>{{ message }}</p>
+  {% endif %}
+  <table>
+    <tr>
+      <th>{{ tr['username'] }}</th>
+      <td>
+        <form action="/cv/set-username" method="post">
+          {{ csrf|safe }}
+          <input name="username" maxlength="30" onKeyUp="check_username()" value="{% if user.username %}{{ user.username }}{% endif %}"/>
+          <input type="submit" value="{{ tr['claim_username'] }}"/>
+          <span id="username_error"></span>
+        </form>
+      </td>
+    </tr>
+  </table>
+  <form id="form" onSubmit="return submit_form(this);">
     {{ csrf|safe }}
     <table>
-      <tr>
-        <th>{{ tr['username'] }}</th>
-        <td>
-          <input name="username" maxlength="30" onKeyUp="check_username()" value="{% if user.username %}{{ user.username }}{% endif %}"/>
-          <button type="button" onClick="set_username()">{{ tr['claim_username'] }}</button>
-          <span id="username_result"></span>
-        </td>
-      </tr>
       <tr>
         <th>{{ tr['name'] }}</th>
         <td><input name="name" maxlength="80" value="{{ user.name }}"/></td>
@@ -187,7 +187,6 @@
     </ul>
     <p><button type="button" onClick="add_social()">{{ tr['add_social'] }}</button></p>
     <p><input type="submit" value="{{ tr['save_changes'] }}"/></p>
-    <p id="form_result"></p>
   </form>
 </div>
 {% endblock %}

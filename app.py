@@ -16,12 +16,20 @@ app = Flask(__name__)
 engine = create_engine(DATABASE)
 get, post = csrf(app, engine)
 
+def valid_url(url):
+  return url.startswith("http://") or url.startswith("https://") or url.startswith("mailto:")
+
+def convert_date(d):
+  if d == '': return None
+  month, year = d.split('/')
+  return date.fromisoformat(f'{year}-{month}-01')
+
 @app.template_filter()
 def calculate_duration_in_months(experience, tr):
   if not experience.start:
     return ''
   end = experience.end if experience.end else date.today()
-  delta = relativedelta(experience.end, experience.start)
+  delta = relativedelta(end, experience.start)
   delta.months += 1
   if delta.months == 12:
     delta.years += 1
@@ -154,17 +162,9 @@ def set_username(redirect, user, tr):
     try:
       user.username = request.form['username'] or None
       session.commit()
-      return {'result': tr['successful_claim'] + request.form['username']}
+      return redirect('/cv/edit', tr['successful_claim'] + request.form['username'])
     except:
-      return {'result': request.form['username'] + tr['is_taken']}
-
-def valid_url(url):
-  return url.startswith("http://") or url.startswith("https://") or url.startswith("mailto:")
-
-def convert_date(d):
-  if d == '': return None
-  month, year = d.split('/')
-  return date.fromisoformat(f'{year}-{month}-01')
+      return redirect('/cv/edit', request.form['username'] + tr['is_taken'])
 
 @post('/cv/edit')
 def edit(redirect, user, tr):
@@ -206,7 +206,7 @@ def edit(redirect, user, tr):
     for name, url in zip(*[request.form.getlist(f'social_{name}') for name in ['name', 'url']]):
       session.add(Social(user_id=user.id, name=name, url=url))
     session.commit()
-    return {'result': tr['cv_updated']}
+    return redirect('/cv/edit', tr['cv_updated'])
 
 @get('/<int:id>')
 def view(render_template, user, tr, id):
