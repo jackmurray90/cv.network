@@ -20,6 +20,7 @@ tr = {
     'yes_delete': "Yes, delete my account",
     'position': "Position/Title (optional)",
     'no_get_me_out': "No, I want to keep my account.",
+    'for': 'for',
     'edit_education': "Edit this qualification/degree",
     'edit_social_media': "Edit social media",
     'successful_claim': 'Successfully claimed username ',
