@@ -15,12 +15,17 @@
     <ul>
       {% for experience in profile.experiences %}
         <li>
-          {% if experience.url %}
-            <a href="{{ experience.url }}">{{ experience.name }}</a>
-          {% else %}
-            {{ experience.name }}
+          <p>
+            {% if experience.url %}
+              <a href="{{ experience.url }}">{{ experience.name }}</a>
+            {% else %}
+              {{ experience.name }}
+            {% endif %}
+            {{ experience|calculate_duration_in_months(tr) }}
+          </p>
+          {% if experience.description %}
+            <p>{{ experience.description }}</p>
           {% endif %}
-          {{ experience|calculate_duration_in_months(tr) }}
         </li>
       {% endfor %}
     </ul>
