@@ -33,9 +33,10 @@
   </table>
   <form id="form" action="/cv/edit-basic-info" method="post">
     {{ csrf|safe }}
-    <table>
+    <table class="wide">
       <tr><th>{{ tr['name'] }}</th><td><input name="name" class="wide" maxlength="80" value="{{ user.name }}"/></td></tr>
       <tr><th>{{ tr['phone_optional'] }}</th><td><input name="phone" class="wide" maxlength="80" value="{{ user.phone }}"/></td></tr>
+      <tr><th>{{ tr['summary'] }}</th><td class="wide"><textarea name="summary" class="wide" maxlength="1000">{{ user.summary }}</textarea></td></tr>
       <tr><th>{{ tr['email_address'] }}</th><td>{{ user.email }} <input {% if user.show_email %}checked{% endif %} type="checkbox" name="show_email" value="true"/> {{ tr['show_email'] }}</td></tr>
       <tr><th>{{ tr['open_to_work'] }}</th><td><input {% if user.open %}checked{% endif %} type="checkbox" name="open" value="true"/></td></tr>
     </table>

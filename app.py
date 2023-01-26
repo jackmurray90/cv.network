@@ -183,14 +183,14 @@ def edit_basic_info(render_template, user, tr):
 @post('/cv/edit-basic-info')
 def edit_basic_info(redirect, user, tr):
   if not user: return redirect('/')
-  if len(request.form['name']) > 80:
-    abort(400)
-  if len(request.form['phone']) > 80:
-    abort(400)
+  if len(request.form['name']) > 80: abort(400)
+  if len(request.form['phone']) > 80: abort(400)
+  if len(request.form['summary']) > 1000: abort(400)
   with Session(engine) as session:
     [user] = session.query(User).where(User.id == user.id)
     user.name = request.form['name']
     user.phone = request.form['phone']
+    user.summary = request.form['summary']
     user.show_email = 'show_email' in request.form
     user.open = 'open' in request.form
     session.commit()

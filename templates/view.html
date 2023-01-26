@@ -38,6 +38,10 @@
     <p><strong>{{ tr['email_address'] }}</strong>: <a href="mailto:{{ profile.email }}">{{ profile.email }}</a></p>
   {% endif %}
 
+  {% if profile.summary %}
+    <p>{{ profile.summary }}</p>
+  {% endif %}
+
   {% if skills %}
     <h2 class="skills">Skills</h2>
     <p class="skills">

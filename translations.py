@@ -21,6 +21,7 @@ tr = {
     'position': "Position/Title (optional)",
     'no_get_me_out': "No, I want to keep my account.",
     'for': 'for',
+    'summary': 'Profile summary',
     'edit_education': "Edit this qualification/degree",
     'edit_social_media': "Edit social media",
     'successful_claim': 'Successfully claimed username ',
