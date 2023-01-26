@@ -43,9 +43,6 @@
       {% for experience in profile.experiences %}
         <li>
           <h3>
-            {% if experience.position %}
-              {{ experience.position }} <small>{{ tr['for'] }}</small>
-            {% endif %}
             {% if experience.url %}
               <a href="{{ experience.url }}">{{ experience.name }}</a>
             {% else %}
@@ -54,6 +51,9 @@
             {{ experience|calculate_duration_in_months(tr) }}
             {% if user and profile.id == user.id %}
               <a class="edit" href="/cv/experience/{{ experience.id }}">{{ tr['edit_experience'] }}</a>
+            {% endif %}
+            {% if experience.position %}
+              <br/><small>{{ experience.position }}</small>
             {% endif %}
           </h3>
           {% if experience.skills %}
