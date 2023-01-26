@@ -54,7 +54,7 @@
         <li>
           <h3>
             {% if experience.position %}
-              {{ experience.position }} {{ tr['for'] }}
+              {{ experience.position }} <small>{{ tr['for'] }}</small>
             {% endif %}
             {% if experience.url %}
               <a href="{{ experience.url }}">{{ experience.name }}</a>
