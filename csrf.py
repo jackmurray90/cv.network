@@ -16,7 +16,7 @@ def csrf(app, engine):
         except:
           api_key = ''
           user = None
-        csrf = f'<input type="hidden" name="csrf" value="{api_key}"/>'
+        csrf = f'<input type="hidden" name="api_key" value="{api_key}"/>'
         language = request.cookies.get('language')
         if language not in accepted_languages:
           language = request.accept_languages.best_match(accepted_languages) or default_language
@@ -45,7 +45,7 @@ def csrf(app, engine):
         language = request.cookies.get('language')
         if language not in accepted_languages:
           language = request.accept_languages.best_match(accepted_languages) or default_language
-        if user and request.form['csrf'] != api_key:
+        if user and request.form['api_key'] != api_key:
           abort(403)
         def r(p, message=''):
           response = make_response(redirect(p))
