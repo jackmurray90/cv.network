@@ -92,11 +92,12 @@
             {% else %}
               {{ education.institution }}
             {% endif %}
+            {{ education|calculate_duration_in_months(tr) }}
             {% if user and user.id == profile.id %}
               <a class="edit" href="/cv/education/{{ education.id }}">{{ tr['edit_education'] }}</a>
             {% endif %}
           </h3>
-          <p>{{ education.qualification }} {{ education|calculate_duration_in_months(tr) }}</p>
+          <p>{{ education.qualification }}</p>
           {% if education.skills %}
             <p class="skills">
               {% for skill in education.skills %}
