@@ -34,7 +34,7 @@ tr = {
     'claim_username': 'Claim username',
     'company': "Company/Project",
     'institution': "Institution",
-    'qualification': "Qualification",
+    'qualification': "Qualification/Degree",
     'url_optional': 'URL (optional)',
     'url': 'URL',
     'description': 'Description (optional)',

@@ -296,7 +296,7 @@ def education(render_template, user, tr, id):
     return render_template('education.html', education=education)
 
 @post('/cv/education/<id>')
-def new_education(redirect, user, tr):
+def education(redirect, user, tr, id):
   if not user: return redirect('/')
   if len(request.form['institution']) > 80: abort(400)
   if len(request.form['url']) > 80: abort(400)
