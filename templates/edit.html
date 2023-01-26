@@ -11,9 +11,9 @@
       const start_month = document.createElement("tr");
       const end_month = document.createElement("tr");
       const remove = document.createElement("tr");
-      name.innerHTML = "<th>{{ tr['company'] }}</th><td class='wide'><input class='wide' name='experience_name'/></td>";
-      url.innerHTML = "<th>{{ tr['url_optional'] }}</th><td class='wide'><input class='wide' name='experience_url'/></td>";
-      description.innerHTML = "<th>{{ tr['description'] }}</th><td class='wide'><textarea class='wide' name='experience_description'></textarea></td>";
+      name.innerHTML = "<th>{{ tr['company'] }}</th><td class='wide'><input maxlength='80' class='wide' name='experience_name'/></td>";
+      url.innerHTML = "<th>{{ tr['url_optional'] }}</th><td class='wide'><input maxlength='80' class='wide' name='experience_url'/></td>";
+      description.innerHTML = "<th>{{ tr['description'] }}</th><td class='wide'><textarea maxlength='1000' class='wide' name='experience_description'></textarea></td>";
       start_month.innerHTML = "<th>{{ tr['start_month'] }}</th><td class='wide'><input name='experience_start'/></td>";
       end_month.innerHTML = "<th>{{ tr['end_month'] }}</th><td class='wide'><input name='experience_end'/></td>";
       remove.innerHTML = "<td colspan='2' class='center'><button type='button' onClick='remove(this)'>{{ tr['remove_experience'] }}</td>";
@@ -36,8 +36,8 @@
       const start_month = document.createElement("tr");
       const end_month = document.createElement("tr");
       const remove = document.createElement("tr");
-      institution.innerHTML = "<th>{{ tr['institution'] }}</th><td class='wide'><input class='wide' name='education_institution'/></td>";
-      qualification.innerHTML = "<th>{{ tr['qualification'] }}</th><td class='wide'><input class='wide' name='education_qualification'/></td>";
+      institution.innerHTML = "<th>{{ tr['institution'] }}</th><td class='wide'><input class='wide' maxlength='80' name='education_institution'/></td>";
+      qualification.innerHTML = "<th>{{ tr['qualification'] }}</th><td class='wide'><input class='wide' maxlength='80' name='education_qualification'/></td>";
       start_month.innerHTML = "<th>{{ tr['start_month'] }}</th><td class='wide'><input name='education_start'/></td>";
       end_month.innerHTML = "<th>{{ tr['end_month'] }}</th><td class='wide'><input name='education_end'/></td>";
       remove.innerHTML = "<td colspan='2' class='center'><button type='button' onClick='remove(this)'>{{ tr['remove_qualification'] }}</td>";
@@ -57,8 +57,8 @@
       const name = document.createElement("tr");
       const url = document.createElement("tr");
       const remove = document.createElement("tr");
-      name.innerHTML = "<th>{{ tr['platform_name'] }}</th><td class='wide'><input name='social_name'/></td>";
-      url.innerHTML = "<th>{{ tr['url'] }}</th><td class='wide'><input class='wide' name='social_url'/></td>";
+      name.innerHTML = "<th>{{ tr['platform_name'] }}</th><td class='wide'><input maxlength='80' name='social_name'/></td>";
+      url.innerHTML = "<th>{{ tr['url'] }}</th><td class='wide'><input class='wide' maxlength='80' name='social_url'/></td>";
       remove.innerHTML = "<td colspan='2' class='center'><button type='button' onClick='remove(this)'>{{ tr['remove_social_media'] }}</td>";
       table.classList.add("wide");
       table.appendChild(name);
@@ -70,31 +70,86 @@
     function remove(remove_button) {
       remove_button.parentNode.parentNode.parentNode.parentNode.remove();
     }
-    async function submit_username(form) {
+    function valid_date(d) {
+      if (d == '') return true;
+      if (d.match(/[^\d/]/g)) return false;
+      const parts = d.split("/");
+      if (parts.length != 2) return false;
+      const month = parseInt(parts[0]);
+      const year = parseInt(parts[1]);
+      if (isNaN(year) || isNaN(month) || month < 1 || month > 12) return false;
+      return true;
+    }
+    function valid_url(d) {
+      return d.startsWith("http://") || d.startsWith("https://") || d.startsWith("mailto:");
+    }
+    function check_username() {
+      const username = document.getElementsByName('username')[0];
+      let result = '';
+      if (document.getElementsByName("username")[0].value.match(/[^a-z0-9-]/g)) {
+        result = "{{ tr['invalid_username'] }}";
+      }
+      document.getElementById("username_result").textContent = result;
+    }
+    async function set_username() {
+      const form = document.getElementById('form');
       const data = new URLSearchParams(new FormData(form));
       const response = await fetch("/cv/set-username", { method: "post", body: data });
       const json = await response.json();
       document.getElementById("username_result").textContent = json['result'];
     }
+    async function submit_form(form) {
+      const data = new URLSearchParams(new FormData(form));
+      const dates = data.getAll('experience_start')
+          .concat(data.getAll('experience_end'))
+          .concat(data.getAll('education_start'))
+          .concat(data.getAll('education_end'));
+      for (let i = 0; i < dates.length; i++) {
+        if (!valid_date(dates[i])) {
+          alert('{{ tr["invalid_date"] }}: ' + dates[i]);
+          return;
+        }
+      }
+      const urls = data.getAll('experience_url')
+          .concat(data.getAll('social_url'));
+      for (let i = 0; i < urls.length; i++) {
+        if (!valid_url(urls[i])) {
+          alert('{{ tr["invalid_url"] }}: ' + urls[i]);
+          return;
+        }
+      }
+      const response = await fetch("/cv/edit", { method: "post", body: data });
+      const json = await response.json();
+      document.getElementById("form_result").textContent = json['result'];
+    }
   </script>
 {% endblock %}
 {% block content %}
 <div id="content">
-  <form onSubmit="submit_username(this); return false;">
+  <form id="form" onSubmit="submit_form(this); return false;">
     {{ csrf|safe }}
-    <p>{{ tr['username'] }}: <input name="username" value="{% if user.username %}{{ user.username }}{% endif %}"/> <input type="submit" value="{{ tr['claim_username'] }}"/> <span id="username_result"></span></p>
-  </form>
-  <form action="/edit" method="post">
-    {{ csrf|safe }}
-    <p>{{ tr['name'] }}: <input name="name" value="{{ user.name }}"/></p>
+    <table>
+      <tr>
+        <th>{{ tr['username'] }}</th>
+        <td>
+          <input name="username" maxlength="30" onKeyUp="check_username()" value="{% if user.username %}{{ user.username }}{% endif %}"/>
+          <button type="button" onClick="set_username()">{{ tr['claim_username'] }}</button>
+          <span id="username_result"></span>
+        </td>
+      </tr>
+      <tr>
+        <th>{{ tr['name'] }}</th>
+        <td><input name="name" maxlength="80" value="{{ user.name }}"/></td>
+      </tr>
+    </table>
     <h2>{{ tr['experience'] }}</h2>
     <ul id='experiences'>
       {% for experience in user.experiences %}
         <li>
           <table>
-            <tr><th>{{ tr['company'] }}</th><td class='wide'><input class='wide' name='experience_name' value="{{ experience.name }}"/></td></tr>
-            <tr><th>{{ tr['url_optional'] }}</th><td class='wide'><input class='wide' name='experience_url' value="{{ experience.url }}"/></td></tr>
-            <tr><th>{{ tr['description'] }}</th><td class='wide'><textarea class='wide' name='experience_description'>{{ experience.description }}</textarea></td></tr>
+            <tr><th>{{ tr['company'] }}</th><td class='wide'><input class='wide' maxlength="80" name='experience_name' value="{{ experience.name }}"/></td></tr>
+            <tr><th>{{ tr['url_optional'] }}</th><td class='wide'><input class='wide' maxlength="80" name='experience_url' value="{{ experience.url }}"/></td></tr>
+            <tr><th>{{ tr['description'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='experience_description'>{{ experience.description }}</textarea></td></tr>
             <tr><th>{{ tr['start_month'] }}</th><td class='wide'><input name='experience_start' value="{{ experience.start|render_month }}"/></td></tr>
             <tr><th>{{ tr['end_month'] }}</th><td class='wide'><input name='experience_end' value="{{ experience.end|render_month }}"/></td>
             <tr><td colspan="2" class="center"><button type="button" onClick="remove(this)">{{ tr['remove_experience'] }}</td></tr>
@@ -108,8 +163,8 @@
       {% for education in user.educations %}
         <li>
           <table>
-            <tr><th>{{ tr['institution'] }}</th><td class='wide'><input class='wide' name='education_institution' value="{{ education.institution }}"/></td></tr>
-            <tr><th>{{ tr['qualification'] }}</th><td class='wide'><input class='wide' name='education_qualification' value="{{ education.qualification }}"/></td></tr>
+            <tr><th>{{ tr['institution'] }}</th><td class='wide'><input class='wide' maxlength="80" name='education_institution' value="{{ education.institution }}"/></td></tr>
+            <tr><th>{{ tr['qualification'] }}</th><td class='wide'><input class='wide' maxlength="80" name='education_qualification' value="{{ education.qualification }}"/></td></tr>
             <tr><th>{{ tr['start_month'] }}</th><td class='wide'><input name='education_start' value="{{ education.start|render_month }}"/></td></tr>
             <tr><th>{{ tr['end_month'] }}</th><td class='wide'><input name='education_end' value="{{ education.end|render_month }}"/></td>
             <tr><td colspan="2" class="center"><button type="button" onClick="remove(this)">{{ tr['remove_qualification'] }}</td></tr>
@@ -123,14 +178,16 @@
       {% for social in user.socials %}
         <li>
           <table>
-            <tr><th>{{ tr['platform_name'] }}</th><td class='wide'><input name='social_name' value="{{ social.name }}"/></td></tr>
-            <tr><th>{{ tr['url'] }}</th><td class='wide'><input class='wide' name='social_url' value="{{ social.url }}"/></td></tr>
+            <tr><th>{{ tr['platform_name'] }}</th><td class='wide'><input maxlength="80" name='social_name' value="{{ social.name }}"/></td></tr>
+            <tr><th>{{ tr['url'] }}</th><td class='wide'><input class='wide' maxlength="80" name='social_url' value="{{ social.url }}"/></td></tr>
             <tr><td colspan="2" class="center"><button type="button" onClick="remove(this)">{{ tr['remove_social_media'] }}</td></tr>
           </table>
         </li>
       {% endfor %}
     </ul>
     <p><button type="button" onClick="add_social()">{{ tr['add_social'] }}</button></p>
+    <p><input type="submit" value="{{ tr['save_changes'] }}"/></p>
+    <p id="form_result"></p>
   </form>
 </div>
 {% endblock %}

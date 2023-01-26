@@ -9,6 +9,7 @@ from time import time
 from mail import send_email
 from os.path import isfile
 from dateutil.relativedelta import relativedelta
+from datetime import date
 import re
 
 app = Flask(__name__)
@@ -17,8 +18,9 @@ get, post = csrf(app, engine)
 
 @app.template_filter()
 def calculate_duration_in_months(experience, tr):
-  if not experience.start or not experience.end:
+  if not experience.start:
     return ''
+  end = experience.end if experience.end else date.today()
   delta = relativedelta(experience.end, experience.start)
   delta.months += 1
   if delta.months == 12:
@@ -37,6 +39,7 @@ def calculate_duration_in_months(experience, tr):
 
 @app.template_filter()
 def render_month(date):
+  if not date: return ''
   return '%02d/%04d' % (date.month, date.year)
 
 @get('/')
@@ -143,20 +146,67 @@ def edit(render_template, user, tr):
 def set_username(redirect, user, tr):
   if not user: return redirect('/')
   if re.search('[^a-z0-9-]', request.form['username']):
-    return {'result': tr['invalid_username']}
+    abort(400)
+  if len(request.form['username']) > 30:
+    abort(400)
   with Session(engine) as session:
     [user] = session.query(User).where(User.id == user.id)
     try:
-      user.username = request.form['username']
+      user.username = request.form['username'] or None
       session.commit()
       return {'result': tr['successful_claim'] + request.form['username']}
     except:
       return {'result': request.form['username'] + tr['is_taken']}
 
+def valid_url(url):
+  return url.startswith("http://") or url.startswith("https://") or url.startswith("mailto:")
+
+def convert_date(d):
+  if d == '': return None
+  month, year = d.split('/')
+  return date.fromisoformat(f'{year}-{month}-01')
+
 @post('/cv/edit')
 def edit(redirect, user, tr):
   if not user: return redirect('/')
-  return "TODO: actually edit the user from the form submitted"
+  if len(request.form['name']) > 80:
+    abort(400)
+  for name, url, description, start, end in zip(*[request.form.getlist(f'experience_{name}') for name in ['name', 'url', 'description', 'start', 'end']]):
+    if len(name) > 80: abort(400)
+    if len(url) > 80: abort(400)
+    if not valid_url(url): abort(400)
+    if len(description) > 1000: abort(400)
+    try:
+      start = convert_date(start)
+      end = convert_date(end)
+    except:
+      abort(400)
+  for institution, qualification, start, end in zip(*[request.form.getlist(f'education_{name}') for name in ['institution', 'qualification', 'start', 'end']]):
+    if len(institution) > 80: abort(400)
+    if len(qualification) > 80: abort(400)
+    try:
+      start = convert_date(start)
+      end = convert_date(end)
+    except:
+      abort(400)
+  for name, url in zip(*[request.form.getlist(f'social_{name}') for name in ['name', 'url']]):
+    if len(name) > 80: abort(400)
+    if len(url) > 80: abort(400)
+    if not valid_url(url): abort(400)
+  with Session(engine) as session:
+    [user] = session.query(User).where(User.id == user.id)
+    for experience in user.experiences: session.delete(experience)
+    for education in user.educations: session.delete(education)
+    for social in user.socials: session.delete(social)
+    user.name = request.form['name']
+    for name, url, description, start, end in zip(*[request.form.getlist(f'experience_{name}') for name in ['name', 'url', 'description', 'start', 'end']]):
+      session.add(Experience(user_id=user.id, name=name, url=url, description=description, start=convert_date(start), end=convert_date(end)))
+    for institution, qualification, start, end in zip(*[request.form.getlist(f'education_{name}') for name in ['institution', 'qualification', 'start', 'end']]):
+      session.add(Education(user_id=user.id, institution=institution, qualification=qualification, start=convert_date(start), end=convert_date(end)))
+    for name, url in zip(*[request.form.getlist(f'social_{name}') for name in ['name', 'url']]):
+      session.add(Social(user_id=user.id, name=name, url=url))
+    session.commit()
+    return {'result': tr['cv_updated']}
 
 @get('/<int:id>')
 def view(render_template, user, tr, id):
