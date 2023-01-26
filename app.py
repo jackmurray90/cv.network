@@ -382,6 +382,32 @@ def social_media(redirect, user, tr):
       return redirect(f'/{user.username}')
     return redirect(f'/{user.id}')
 
+@get('/cv/delete')
+def delete(render_template, user, tr):
+  if not user: return redirect('/')
+  return render_template('delete.html')
+
+@post('/cv/delete')
+def delete(redirect, user, tr):
+  if not user: return redirect('/')
+  with Session(engine) as session:
+    [user] = session.query(User).where(User.id == user.id)
+    for experience in user.experiences:
+      for skill in experience.skills:
+        session.delete(skill)
+      session.delete(experience)
+    for education in user.educations:
+      for skill in education.skills:
+        session.delete(skill)
+      session.delete(education)
+    for social_media in user.social_media:
+      session.delete(social_media)
+    for view in user.views:
+      session.delete(view)
+    session.delete(user)
+    session.commit()
+    return redirect('/')
+
 @get('/<int:id>')
 def view(render_template, user, tr, id):
   log_referrer()
