@@ -1,10 +1,24 @@
 {% extends 'base.html' %}
+{% block head %}
+  <script>
+    document.onload = function() {
+      jSuites.calendar(document.getElementsByName('start')[0], {
+        type: 'year-month-picker',
+        format: 'MM/YYYY'
+      });
+      jSuites.calendar(document.getElementsByName('end')[0], {
+        type: 'year-month-picker',
+        format: 'MM/YYYY'
+      });
+    }
+  </script>
+{% endblock %}
 {% block content %}
 <div id="content">
   {% if message %}
     <p>{{ message }}</p>
   {% endif %}
-  <form id="form" action="/cv/experience/{{ experience.id or 'new' }}" method="post">
+  <form action="/cv/experience/{{ experience.id or 'new' }}" method="post">
     {{ csrf|safe }}
     <table>
       <tr><th>{{ tr['company'] }}</th><td class='wide'><input class='wide' maxlength="80" name='name' value="{{ experience.name }}"/></td></tr>
