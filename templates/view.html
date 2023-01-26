@@ -25,9 +25,6 @@
     {% if user and profile.id == user.id %}
       <a class="edit" href="/cv/edit-basic-info">{{ tr['edit_basic_info'] }}</a>
     {% endif %}
-    {% if skills %}
-      <a class="edit" href="#" onClick="return toggle_skills();">{{ tr['toggle_skills'] }}</a>
-    {% endif %}
   </h1>
 
   {% if profile.phone %}
@@ -44,6 +41,7 @@
   {% endif %}
 
   {% if skills %}
+    <p><a href="#" onClick="return toggle_skills();">{{ tr['toggle_skills'] }}</a></p>
     <h2 class="skills">{{ tr['skills'] }}</h2>
     <p class="skills">
       {% for skill in skills %}

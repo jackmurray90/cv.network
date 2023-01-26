@@ -59,7 +59,7 @@ tr = {
     'save_social_media': "Save social media links",
     'delete_social_media': "Delete this social media link",
     'view': 'View my CV',
-    'toggle_skills': 'Toggle displaying skills',
+    'toggle_skills': 'Toggle skills',
     'verification_email_subject': 'Verify your e-mail.',
     'verify_your_email': 'Please verify your e-mail by clicking the link we sent to %s.',
     'verification_email_header': 'Welcome to CV Network',
