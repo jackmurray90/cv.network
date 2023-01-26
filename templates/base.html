@@ -32,11 +32,11 @@
     {% else %}
       <a href="/{{ user.id }}">{{ tr['view'] }}</a>
     {% endif %}
-    <a href="/edit">{{ tr['edit'] }}</a>
+    <a href="/cv/edit">{{ tr['edit'] }}</a>
     {% if user.admin %}
-      <a href="/referrers">{{ tr['referrers'] }}</a>
+      <a href="/cv/referrers">{{ tr['referrers'] }}</a>
     {% endif %}
-    <form action="/logout" method="post">
+    <form action="/cv/logout" method="post">
       {{ csrf|safe }}
       <input type="submit" value="{{ tr['logout'] }}"/>
     </form>

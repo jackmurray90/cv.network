@@ -43,7 +43,7 @@ def render_month(date):
 def landing_page(render_template, user, tr):
   log_referrer()
   if user:
-    return redirect('/edit')
+    return redirect('/cv/edit')
   return render_template('landing_page.html')
 
 @get('/sitemap.xml')
@@ -53,25 +53,25 @@ def sitemap(render_template, user, tr):
     response.headers['Content-Type'] = 'text/xml'
     return response
 
-@get('/referrers')
+@get('/cv/referrers')
 def referrers(render_template, user, tr):
   if not user or not user.admin: return redirect('/')
   with Session(engine) as session:
     return render_template('referrers.html', referrers=session.query(Referrer).order_by(Referrer.count.desc()).all())
 
-@get('/sign_up')
+@get('/cv/sign-up')
 def sign_up(render_template, user, tr):
   if user: return redirect('/')
   return render_template('login.html', sign_up=True)
 
-@post('/sign_up')
+@post('/cv/sign-up')
 def sign_up(redirect, user, tr):
   if user: return redirect('/')
   with Session(engine) as session:
     try:
       [user] = session.query(User).where(User.email == request.form['email'])
       if user.email_verified:
-        return redirect('/sign_up', tr['account_already_exists'])
+        return redirect('/cv/sign-up', tr['account_already_exists'])
     except:
       user = User(email=request.form['email'], api_key=random_128_bit_string())
       session.add(user)
@@ -80,9 +80,9 @@ def sign_up(redirect, user, tr):
     session.add(login_code)
     session.commit()
     send_email(request.form['email'], tr['verification_email_subject'], render_template('emails/verification.html', tr=tr, code=login_code.code))
-    return redirect('/sign_up', tr['verify_your_email'] % request.form['email'])
+    return redirect('/cv/sign-up', tr['verify_your_email'] % request.form['email'])
 
-@get('/login/<code>')
+@get('/cv/login/<code>')
 def login(render_template, user, tr, code):
   with Session(engine) as session:
     try:
@@ -99,37 +99,37 @@ def login(render_template, user, tr, code):
     response.set_cookie('api_key', user.api_key)
     return response
 
-@get('/login')
+@get('/cv/login')
 def login(render_template, user, tr):
   if user: return redirect('/')
   return render_template('login.html')
 
-@post('/login')
+@post('/cv/login')
 def login(redirect, user, tr):
   if user: return redirect('/')
   with Session(engine) as session:
     try:
       [user] = session.query(User).where(User.email == request.form['email'])
     except:
-      return redirect('/login', tr['email_not_found'])
+      return redirect('/cv/login', tr['email_not_found'])
     login_code = LoginCode(user_id=user.id, code=random_128_bit_string(), expiry=int(time()+60*60*2))
     session.add(login_code)
     session.commit()
     if user.email_verified:
       send_email(request.form['email'], tr['login_email_subject'], render_template('emails/login.html', tr=tr, code=login_code.code))
-      return redirect('/login', tr['login_email_sent'])
+      return redirect('/cv/login', tr['login_email_sent'])
     else:
       send_email(request.form['email'], tr['verification_email_subject'], render_template('emails/verification.html', tr=tr, code=login_code.code))
-      return redirect('/sign_up', tr['verify_your_email'] % request.form['email'])
+      return redirect('/cv/sign-up', tr['verify_your_email'] % request.form['email'])
 
-@post('/logout')
+@post('/cv/logout')
 def logout(redirect, user, tr):
   if not user: return redirect('/')
   response = redirect('/')
   response.set_cookie('api_key', '', expires=0)
   return response
 
-@get('/edit')
+@get('/cv/edit')
 def edit(render_template, user, tr):
   if not user: return redirect('/')
   with Session(engine) as session:
@@ -139,7 +139,7 @@ def edit(render_template, user, tr):
     user.socials
     return render_template('edit.html', user=user)
 
-@post('/edit')
+@post('/cv/edit')
 def edit(redirect, user, tr):
   if not user: return redirect('/')
   return "TODO: actually edit the user from the form submitted"

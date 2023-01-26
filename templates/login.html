@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<form class="center" action="{% if sign_up %}/sign_up{% else %}/login{% endif %}" method="post">
+<form class="center" action="{% if sign_up %}/cv/sign-up{% else %}/cv/login{% endif %}" method="post">
   <h1>CV  Network</h1>
   {% if message %}
     <p>{{ message }}</p>
