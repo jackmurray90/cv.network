@@ -1,4 +1,16 @@
 {% extends 'base.html' %}
+{% block head %}
+  <script>
+    function toggle_skills() {
+      const skills = document.getElementsByClassName("skills");
+      const class_name = skills[0].classList.contains("hide") ? "skills" : "skills hide";
+      for (let i = 0; i < skills.length; i++) {
+        skills[i].className = class_name;
+      }
+      return false;
+    }
+  </script>
+{% endblock %}
 {% block content %}
 <div id="content">
   <h1>
@@ -11,10 +23,19 @@
     {% if user and profile.id == user.id %}
       <a class="edit" href="/cv/edit-basic-info">{{ tr['edit_basic_info'] }}</a>
     {% endif %}
+    <a class="edit" href="#" onClick="return toggle_skills();">{{ tr['toggle_skills'] }}</a>
   </h1>
 
+  {% if profile.phone %}
+    <p><strong>{{ tr['phone'] }}</strong>: {{ profile.phone }}</p>
+  {% endif %}
+
+  {% if profile.show_email %}
+    <p><strong>{{ tr['email_address'] }}</strong>: <a href="mailto:{{ profile.email }}">{{ profile.email }}</a></p>
+  {% endif %}
+
   {% if skills %}
-    <h2>Skills</h2>
+    <h2 class="skills">Skills</h2>
     <p class="skills">
       {% for skill in skills %}
         <span>{{ skill.name }}</span>
@@ -23,7 +44,7 @@
   {% endif %}
 
   {% if profile.experiences or (user and user.id == profile.id) %}
-    <h2>{{ tr['experience'] }} <a class="edit" href="/cv/experience/new">{{ tr['new_experience'] }}</a></h2>
+    <h2>{{ tr['experience'] }} {% if user and user.id == profile.id %}<a class="edit" href="/cv/experience/new">{{ tr['new_experience'] }}</a>{% endif %}</h2>
     <ul>
       {% for experience in profile.experiences %}
         <li>
@@ -54,11 +75,11 @@
   {% endif %}
 
   {% if profile.educations or (user and user.id == profile.id) %}
-    <h2>{{ tr['education'] }} <a class="edit" href="/cv/education/new">{{ tr['new_education'] }}</a></h2>
+    <h2>{{ tr['education'] }} {% if user and user.id == profile.id %}<a class="edit" href="/cv/education/new">{{ tr['new_education'] }}</a>{% endif %}</h2>
     <ul>
       {% for education in profile.educations %}
         <li>
-          <h3>{{ education.institution }} <a class="edit" href="/cv/education/{{ education.id }}">{{ tr['edit_education'] }}</a></h3>
+          <h3>{{ education.institution }} {% if user and user.id == profile.id %}<a class="edit" href="/cv/education/{{ education.id }}">{{ tr['edit_education'] }}</a>{% endif %}</h3>
           <p>{{ education.qualification }} {{ education|calculate_duration_in_months(tr) }}</p>
           {% if education.skills %}
             <p class="skills">
@@ -72,11 +93,11 @@
     </ul>
   {% endif %}
 
-  {% if profile.socials or (user and user.id == profile.id) %}
-    <h2>{{ tr['social_media'] }} <a class="edit" href="/cv/social-media">{{ tr['edit_social_media'] }}</h2>
+  {% if profile.social_media or (user and user.id == profile.id) %}
+    <h2>{{ tr['social_media'] }} {% if user and user.id == profile.id %}<a class="edit" href="/cv/social-media">{{ tr['edit_social_media'] }}{% endif %}</h2>
     <ul>
-      {% for social in profile.socials %}
-        <li><a href="{{ social.url }}">{{ social.name }}</a></li>
+      {% for social_media in profile.social_media %}
+        <li><a href="{{ social_media.url }}">{{ social_media.name }}</a></li>
       {% endfor %}
     </ul>
   {% endif %}

@@ -192,6 +192,7 @@ def edit_basic_info(redirect, user, tr):
     user.name = request.form['name']
     user.phone = request.form['phone']
     user.show_email = 'show_email' in request.form
+    user.open = 'open' in request.form
     session.commit()
     if user.username:
       return redirect(f'/{user.username}')
@@ -203,6 +204,9 @@ def experience(render_template, user, tr, id):
   with Session(engine) as session:
     if id == 'new':
       experience = Experience()
+      experience.name = ''
+      experience.url = ''
+      experience.description = ''
     else:
       try:
         [experience] = session.query(Experience).where(Experience.id == id)
@@ -266,7 +270,7 @@ def experience(redirect, user, tr, id):
         abort(404)
       if experience.user_id != user.id:
         abort(403)
-      for skill in experience:
+      for skill in experience.skills:
         session.delete(skill)
       session.delete(experience)
       session.commit()
@@ -280,6 +284,8 @@ def education(render_template, user, tr, id):
   with Session(engine) as session:
     if id == 'new':
       education = Education()
+      education.institution = ''
+      education.qualification = ''
     else:
       try:
         [education] = session.query(Education).where(Education.id == id)
@@ -343,7 +349,7 @@ def education(redirect, user, tr, id):
         abort(404)
       if education.user_id != user.id:
         abort(403)
-      for skill in education:
+      for skill in education.skills:
         session.delete(skill)
       session.delete(education)
       session.commit()

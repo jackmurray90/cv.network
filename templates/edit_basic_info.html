@@ -32,9 +32,10 @@
   <form id="form" action="/cv/edit-basic-info" method="post">
     {{ csrf|safe }}
     <table>
-      <tr><th>{{ tr['name'] }}</th><td class="wide"><input name="name" maxlength="80" value="{{ user.name }}"/></td></tr>
-      <tr><th>{{ tr['phone'] }}</th><td class="wide"><input name="phone" maxlength="80" value="{{ user.phone }}"/></td></tr>
-      <tr><th>{{ tr['email_address'] }}</th><td class="wide">{{ user.email }} <input type="checkbox" name="show_email" value="true"/> {{ tr['show_email'] }}</td></tr>
+      <tr><th>{{ tr['name'] }}</th><td><input name="name" class="wide" maxlength="80" value="{{ user.name }}"/></td></tr>
+      <tr><th>{{ tr['phone_optional'] }}</th><td><input name="phone" class="wide" maxlength="80" value="{{ user.phone }}"/></td></tr>
+      <tr><th>{{ tr['email_address'] }}</th><td>{{ user.email }} <input {% if user.show_email %}checked{% endif %} type="checkbox" name="show_email" value="true"/> {{ tr['show_email'] }}</td></tr>
+      <tr><th>{{ tr['open_to_work'] }}</th><td><input {% if user.open %}checked{% endif %} type="checkbox" name="open" value="true"/></td></tr>
     </table>
     <p><input type="submit" value="{{ tr['save_changes'] }}"/></p>
   </form>
