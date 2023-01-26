@@ -15,8 +15,8 @@ class User(Base):
   admin = Column(Boolean, default=False)
   phone = Column(String, default='')
   show_email = Column(Boolean, default=False)
-  experiences = relationship('Experience')
-  educations = relationship('Education')
+  experiences = relationship('Experience', order_by="[desc(Experience.end), desc(Experience.start), desc(Experience.id)]")
+  educations = relationship('Education', order_by="[desc(Education.end), desc(Education.start), desc(Education.id)]")
   social_media = relationship('SocialMedia')
 
 class Experience(Base):

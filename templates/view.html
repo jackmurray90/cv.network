@@ -19,6 +19,8 @@
     {% endif %}
     {% if profile.name %}
       {{ profile.name }}
+    {% else %}
+      {{ tr['your_name_here'] }}
     {% endif %}
     {% if user and profile.id == user.id %}
       <a class="edit" href="/cv/edit-basic-info">{{ tr['edit_basic_info'] }}</a>

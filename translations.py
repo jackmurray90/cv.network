@@ -35,6 +35,7 @@ tr = {
     'company': "Company/Project",
     'institution': "Institution",
     'qualification': "Qualification/Degree",
+    'your_name_here': "<Your Name Here>",
     'url_optional': 'URL (optional)',
     'url': 'URL',
     'description': 'Description (optional)',
