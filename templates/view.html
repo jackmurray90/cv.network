@@ -10,6 +10,15 @@
     {% endif %}
   </h1>
 
+  {% if skills %}
+    <h2>Skills</h2>
+    <p>
+      {% for skill in skills %}
+        <span class='skill'>{{ skill.name }}</span>
+      {% endfor %}
+    </p>
+  {% endif %}
+
   {% if profile.experiences %}
     <h2>{{ tr['experience'] }}</h2>
     <ul>
@@ -23,6 +32,13 @@
             {% endif %}
             {{ experience|calculate_duration_in_months(tr) }}
           </p>
+          {% if experience.skills %}
+            <p>
+              {% for skill in experience.skills %}
+                <span class='skill'>{{ skill.name }}</span>
+              {% endfor %}
+            </p>
+          {% endif %}
           {% if experience.description %}
             <p>{{ experience.description }}</p>
           {% endif %}
@@ -34,9 +50,20 @@
   {% if profile.educations %}
     <h2>{{ tr['education'] }}</h2>
 
-    {% for education in profile.educations %}
-      <p>{{ education.institution }}<br/>{{ education.qualification }} {{ education|calculate_duration_in_months(tr) }}</p>
-    {% endfor %}
+    <ul>
+      {% for education in profile.educations %}
+        <li>
+          <p>{{ education.institution }}</p>
+          <p>{{ education.qualification }} {{ education|calculate_duration_in_months(tr) }}</p>
+          {% if education.skills %}
+            <p>
+              {% for skill in education.skills %}
+                <span class='skill'>{{ skill.name }}</span>
+              {% endfor %}
+            </p>
+          {% endif %}
+        </li>
+      {% endfor %}
   {% endif %}
 
   {% if profile.socials %}

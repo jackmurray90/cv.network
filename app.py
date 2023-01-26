@@ -4,7 +4,7 @@ from util import random_128_bit_string
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from config import DATABASE
-from db import User, Experience, Education, Social, LoginCode, Referrer, View
+from db import User, Experience, Education, Social, LoginCode, Referrer, View, Skill
 from time import time
 from mail import send_email
 from os.path import isfile
@@ -23,6 +23,13 @@ def convert_date(d):
   if d == '': return None
   month, year = d.split('/')
   return date.fromisoformat(f'{year}-{month}-01')
+
+def add_skills(skills, new_skills):
+  ret = skills
+  for skill in new_skills:
+    if all([s.name.lower() != skill.name.lower() for s in skills]):
+      ret.append(skill)
+  return ret
 
 @app.template_filter()
 def calculate_duration_in_months(experience, tr):
@@ -49,6 +56,10 @@ def calculate_duration_in_months(experience, tr):
 def render_month(date):
   if not date: return ''
   return '%02d/%04d' % (date.month, date.year)
+
+@app.template_filter()
+def render_skills(skills):
+  return ', '.join([s.name for s in skills])
 
 @get('/')
 def landing_page(render_template, user, tr):
@@ -145,9 +156,6 @@ def edit(render_template, user, tr):
   if not user: return redirect('/')
   with Session(engine) as session:
     [user] = session.query(User).where(User.id == user.id)
-    user.experiences
-    user.educations
-    user.socials
     return render_template('edit.html', user=user)
 
 @post('/cv/set-username')
@@ -171,19 +179,21 @@ def edit(redirect, user, tr):
   if not user: return redirect('/')
   if len(request.form['name']) > 80:
     abort(400)
-  for name, url, description, start, end in zip(*[request.form.getlist(f'experience_{name}') for name in ['name', 'url', 'description', 'start', 'end']]):
+  for name, url, description, skills, start, end in zip(*[request.form.getlist(f'experience_{name}') for name in ['name', 'url', 'description', 'skills', 'start', 'end']]):
     if len(name) > 80: abort(400)
     if len(url) > 80: abort(400)
     if not valid_url(url): abort(400)
     if len(description) > 1000: abort(400)
+    if len(skills) > 1000: abort(400)
     try:
       start = convert_date(start)
       end = convert_date(end)
     except:
       abort(400)
-  for institution, qualification, start, end in zip(*[request.form.getlist(f'education_{name}') for name in ['institution', 'qualification', 'start', 'end']]):
+  for institution, qualification, skills, start, end in zip(*[request.form.getlist(f'education_{name}') for name in ['institution', 'qualification', 'skills', 'start', 'end']]):
     if len(institution) > 80: abort(400)
     if len(qualification) > 80: abort(400)
+    if len(skills) > 1000: abort(400)
     try:
       start = convert_date(start)
       end = convert_date(end)
@@ -195,14 +205,31 @@ def edit(redirect, user, tr):
     if not valid_url(url): abort(400)
   with Session(engine) as session:
     [user] = session.query(User).where(User.id == user.id)
-    for experience in user.experiences: session.delete(experience)
-    for education in user.educations: session.delete(education)
-    for social in user.socials: session.delete(social)
+    for experience in user.experiences:
+      for skill in experience.skills:
+        session.delete(skill)
+      session.delete(experience)
+    for education in user.educations:
+      for skill in education.skills:
+        session.delete(skill)
+      session.delete(education)
+    for social in user.socials:
+      session.delete(social)
     user.name = request.form['name']
-    for name, url, description, start, end in zip(*[request.form.getlist(f'experience_{name}') for name in ['name', 'url', 'description', 'start', 'end']]):
-      session.add(Experience(user_id=user.id, name=name, url=url, description=description, start=convert_date(start), end=convert_date(end)))
-    for institution, qualification, start, end in zip(*[request.form.getlist(f'education_{name}') for name in ['institution', 'qualification', 'start', 'end']]):
-      session.add(Education(user_id=user.id, institution=institution, qualification=qualification, start=convert_date(start), end=convert_date(end)))
+    for name, url, description, skills, start, end in zip(*[request.form.getlist(f'experience_{name}') for name in ['name', 'url', 'description', 'skills', 'start', 'end']]):
+      experience = Experience(user_id=user.id, name=name, url=url, description=description, start=convert_date(start), end=convert_date(end))
+      session.add(experience)
+      session.commit()
+      for skill_name in skills.split(","):
+        if skill_name.strip():
+          session.add(Skill(experience_id=experience.id, name=skill_name.strip()))
+    for institution, qualification, skills, start, end in zip(*[request.form.getlist(f'education_{name}') for name in ['institution', 'qualification', 'skills', 'start', 'end']]):
+      education = Education(user_id=user.id, institution=institution, qualification=qualification, start=convert_date(start), end=convert_date(end))
+      session.add(education)
+      session.commit()
+      for skill_name in skills.split(","):
+        if skill_name.strip():
+          session.add(Skill(education_id=education.id, name=skill_name.strip()))
     for name, url in zip(*[request.form.getlist(f'social_{name}') for name in ['name', 'url']]):
       session.add(Social(user_id=user.id, name=name, url=url))
     session.commit()
@@ -235,7 +262,12 @@ def view_profile(render_template, session, profile):
   if view.timestamp + 60*60*24 < time():
     session.add(View(user_id=profile.id, remote_address=request.remote_addr, timestamp=int(time())))
     session.commit()
-  return render_template('view.html', profile=profile, profile_picture_exists=isfile(f'static/profile_pictures/{profile.id}'))
+  skills = []
+  for experience in profile.experiences:
+    skills = add_skills(skills, experience.skills)
+  for education in profile.educations:
+    skills = add_skills(skills, education.skills)
+  return render_template('view.html', profile=profile, skills=skills, profile_picture_exists=isfile(f'static/profile_pictures/{profile.id}'))
 
 def log_referrer():
   try:

@@ -8,12 +8,14 @@
       const name = document.createElement("tr");
       const url = document.createElement("tr");
       const description = document.createElement("tr");
+      const skills = document.createElement("tr");
       const start_month = document.createElement("tr");
       const end_month = document.createElement("tr");
       const remove = document.createElement("tr");
       name.innerHTML = "<th>{{ tr['company'] }}</th><td class='wide'><input maxlength='80' class='wide' name='experience_name'/></td>";
       url.innerHTML = "<th>{{ tr['url_optional'] }}</th><td class='wide'><input maxlength='80' class='wide' name='experience_url'/></td>";
       description.innerHTML = "<th>{{ tr['description'] }}</th><td class='wide'><textarea maxlength='1000' class='wide' name='experience_description'></textarea></td>";
+      skills.innerHTML = "<tr><th>{{ tr['skills'] }}</th><td class='wide'><textarea class='wide' maxlength='1000' name='experience_skills'></textarea></td></tr>";
       start_month.innerHTML = "<th>{{ tr['start_month'] }}</th><td class='wide'><input name='experience_start'/></td>";
       end_month.innerHTML = "<th>{{ tr['end_month'] }}</th><td class='wide'><input name='experience_end'/></td>";
       remove.innerHTML = "<td colspan='2' class='center'><button type='button' onClick='remove(this)'>{{ tr['remove_experience'] }}</td>";
@@ -21,6 +23,7 @@
       table.appendChild(name);
       table.appendChild(url);
       table.appendChild(description);
+      table.appendChild(skills);
       table.appendChild(start_month);
       table.appendChild(end_month);
       table.appendChild(remove);
@@ -33,17 +36,20 @@
       const table = document.createElement("table");
       const institution = document.createElement("tr");
       const qualification = document.createElement("tr");
+      const skills = document.createElement("tr");
       const start_month = document.createElement("tr");
       const end_month = document.createElement("tr");
       const remove = document.createElement("tr");
       institution.innerHTML = "<th>{{ tr['institution'] }}</th><td class='wide'><input class='wide' maxlength='80' name='education_institution'/></td>";
       qualification.innerHTML = "<th>{{ tr['qualification'] }}</th><td class='wide'><input class='wide' maxlength='80' name='education_qualification'/></td>";
+      skills.innerHTML = "<tr><th>{{ tr['skills'] }}</th><td class='wide'><textarea class='wide' maxlength='1000' name='education_skills'></textarea></td></tr>";
       start_month.innerHTML = "<th>{{ tr['start_month'] }}</th><td class='wide'><input name='education_start'/></td>";
       end_month.innerHTML = "<th>{{ tr['end_month'] }}</th><td class='wide'><input name='education_end'/></td>";
       remove.innerHTML = "<td colspan='2' class='center'><button type='button' onClick='remove(this)'>{{ tr['remove_qualification'] }}</td>";
       table.classList.add("wide");
       table.appendChild(institution);
       table.appendChild(qualification);
+      table.appendChild(skills);
       table.appendChild(start_month);
       table.appendChild(end_month);
       table.appendChild(remove);
@@ -93,7 +99,6 @@
     }
     async function submit_form(form) {
       const data = new URLSearchParams(new FormData(form));
-      alert(data.getAll('submit'));
       const dates = data.getAll('experience_start')
           .concat(data.getAll('experience_end'))
           .concat(data.getAll('education_start'))
@@ -134,12 +139,12 @@
       </td>
     </tr>
   </table>
-  <form id="form" onSubmit="return submit_form(this);">
+  <form id="form" onSubmit="return submit_form(this);" action="/cv/edit" method="post">
     {{ csrf|safe }}
     <table>
       <tr>
         <th>{{ tr['name'] }}</th>
-        <td><input name="name" maxlength="80" value="{{ user.name }}"/></td>
+        <td class="wide"><input name="name" maxlength="80" value="{{ user.name }}"/></td>
       </tr>
     </table>
     <h2>{{ tr['experience'] }}</h2>
@@ -150,6 +155,7 @@
             <tr><th>{{ tr['company'] }}</th><td class='wide'><input class='wide' maxlength="80" name='experience_name' value="{{ experience.name }}"/></td></tr>
             <tr><th>{{ tr['url_optional'] }}</th><td class='wide'><input class='wide' maxlength="80" name='experience_url' value="{{ experience.url }}"/></td></tr>
             <tr><th>{{ tr['description'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='experience_description'>{{ experience.description }}</textarea></td></tr>
+            <tr><th>{{ tr['skills'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='experience_skills'>{{ experience.skills|render_skills }}</textarea></td></tr>
             <tr><th>{{ tr['start_month'] }}</th><td class='wide'><input name='experience_start' value="{{ experience.start|render_month }}"/></td></tr>
             <tr><th>{{ tr['end_month'] }}</th><td class='wide'><input name='experience_end' value="{{ experience.end|render_month }}"/></td>
             <tr><td colspan="2" class="center"><button type="button" onClick="remove(this)">{{ tr['remove_experience'] }}</td></tr>
@@ -165,6 +171,7 @@
           <table>
             <tr><th>{{ tr['institution'] }}</th><td class='wide'><input class='wide' maxlength="80" name='education_institution' value="{{ education.institution }}"/></td></tr>
             <tr><th>{{ tr['qualification'] }}</th><td class='wide'><input class='wide' maxlength="80" name='education_qualification' value="{{ education.qualification }}"/></td></tr>
+            <tr><th>{{ tr['skills'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='education_skills'>{{ education.skills|render_skills }}</textarea></td></tr>
             <tr><th>{{ tr['start_month'] }}</th><td class='wide'><input name='education_start' value="{{ education.start|render_month }}"/></td></tr>
             <tr><th>{{ tr['end_month'] }}</th><td class='wide'><input name='education_end' value="{{ education.end|render_month }}"/></td>
             <tr><td colspan="2" class="center"><button type="button" onClick="remove(this)">{{ tr['remove_qualification'] }}</td></tr>

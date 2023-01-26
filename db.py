@@ -26,14 +26,7 @@ class Experience(Base):
   description = Column(Text)
   start = Column(Date)
   end = Column(Date)
-
-class Skill(Base):
-  __tablename__ = 'skills'
-  id = Column(Integer, primary_key=True)
-  user_id = Column(Integer, ForeignKey('users.id'))
-  experience_id = Column(Integer, ForeignKey('experiences.id'))
-  education_id = Column(Integer, ForeignKey('educations.id'))
-  name = Column(String)
+  skills = relationship('Skill')
 
 class Education(Base):
   __tablename__ = 'educations'
@@ -41,8 +34,16 @@ class Education(Base):
   user_id = Column(Integer, ForeignKey('users.id'))
   institution = Column(String)
   qualification = Column(String)
+  skills = relationship('Skill')
   start = Column(Date)
   end = Column(Date)
+
+class Skill(Base):
+  __tablename__ = 'skills'
+  id = Column(Integer, primary_key=True)
+  experience_id = Column(Integer, ForeignKey('experiences.id'))
+  education_id = Column(Integer, ForeignKey('educations.id'))
+  name = Column(String)
 
 class Social(Base):
   __tablename__ = 'socials'

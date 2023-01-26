@@ -8,6 +8,7 @@ tr = {
     'invalid_url': "Invalid url (must start with http:// or https:// or mailto:)",
     'save_changes': 'Save changes',
     'cv_updated': 'CV updated.',
+    'skills': "Skills (comma separated)",
     'successful_claim': 'Successfully claimed username ',
     'login': "Log In",
     'log_in': 'log in',
