@@ -23,7 +23,9 @@
     {% if user and profile.id == user.id %}
       <a class="edit" href="/cv/edit-basic-info">{{ tr['edit_basic_info'] }}</a>
     {% endif %}
-    <a class="edit" href="#" onClick="return toggle_skills();">{{ tr['toggle_skills'] }}</a>
+    {% if skills %}
+      <a class="edit" href="#" onClick="return toggle_skills();">{{ tr['toggle_skills'] }}</a>
+    {% endif %}
   </h1>
 
   {% if profile.phone %}
@@ -79,7 +81,16 @@
     <ul>
       {% for education in profile.educations %}
         <li>
-          <h3>{{ education.institution }} {% if user and user.id == profile.id %}<a class="edit" href="/cv/education/{{ education.id }}">{{ tr['edit_education'] }}</a>{% endif %}</h3>
+          <h3>
+            {% if education.url %}
+              <a href="{{ education.url }}">{{ education.institution }}</a>
+            {% else %}
+              {{ education.institution }}
+            {% endif %}
+            {% if user and user.id == profile.id %}
+              <a class="edit" href="/cv/education/{{ education.id }}">{{ tr['edit_education'] }}</a>
+            {% endif %}
+          </h3>
           <p>{{ education.qualification }} {{ education|calculate_duration_in_months(tr) }}</p>
           {% if education.skills %}
             <p class="skills">

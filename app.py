@@ -285,6 +285,7 @@ def education(render_template, user, tr, id):
     if id == 'new':
       education = Education()
       education.institution = ''
+      education.url = ''
       education.qualification = ''
     else:
       try:
@@ -362,7 +363,7 @@ def social_media(render_template, user, tr):
   if not user: return redirect('/')
   with Session(engine) as session:
     [user] = session.query(User).where(User.id == user.id)
-    return render_template('social_media.html')
+    return render_template('social_media.html', user=user)
 
 @post('/cv/social-media')
 def social_media(redirect, user, tr):
@@ -371,6 +372,7 @@ def social_media(redirect, user, tr):
     if len(name) > 80: abort(400)
     if len(url) > 80: abort(400)
   with Session(engine) as session:
+    [user] = session.query(User).where(User.id == user.id)
     for social_media in user.social_media:
       session.delete(social_media)
     for name, url in zip(*[request.form.getlist(name) for name in ['name', 'url']]):

@@ -35,6 +35,7 @@ class Education(Base):
   id = Column(Integer, primary_key=True)
   user_id = Column(Integer, ForeignKey('users.id'))
   institution = Column(String, default='')
+  url = Column(String, default='')
   qualification = Column(String, default='')
   start = Column(Date)
   end = Column(Date)
