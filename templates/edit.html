@@ -16,7 +16,7 @@
       description.innerHTML = "<th>{{ tr['description'] }}</th><td class='wide'><textarea class='wide' name='experience_description'></textarea></td>";
       start_month.innerHTML = "<th>{{ tr['start_month'] }}</th><td class='wide'><input name='experience_start'/></td>";
       end_month.innerHTML = "<th>{{ tr['end_month'] }}</th><td class='wide'><input name='experience_end'/></td>";
-      remove.innerHTML = '<td colspan="2" class="center"><button type="button" onClick="remove(this)">{{ tr["remove_experience"] }}</td>';
+      remove.innerHTML = "<td colspan='2' class='center'><button type='button' onClick='remove(this)'>{{ tr['remove_experience'] }}</td>";
       table.classList.add("wide");
       table.appendChild(name);
       table.appendChild(url);
@@ -40,7 +40,7 @@
       qualification.innerHTML = "<th>{{ tr['qualification'] }}</th><td class='wide'><input class='wide' name='education_qualification'/></td>";
       start_month.innerHTML = "<th>{{ tr['start_month'] }}</th><td class='wide'><input name='education_start'/></td>";
       end_month.innerHTML = "<th>{{ tr['end_month'] }}</th><td class='wide'><input name='education_end'/></td>";
-      remove.innerHTML = '<td colspan="2" class="center"><button type="button" onClick="remove(this)">{{ tr["remove_qualification"] }}</td>';
+      remove.innerHTML = "<td colspan='2' class='center'><button type='button' onClick='remove(this)'>{{ tr['remove_qualification'] }}</td>";
       table.classList.add("wide");
       table.appendChild(institution);
       table.appendChild(qualification);
@@ -59,7 +59,7 @@
       const remove = document.createElement("tr");
       name.innerHTML = "<th>{{ tr['platform_name'] }}</th><td class='wide'><input name='social_name'/></td>";
       url.innerHTML = "<th>{{ tr['url'] }}</th><td class='wide'><input class='wide' name='social_url'/></td>";
-      remove.innerHTML = '<td colspan="2" class="center"><button type="button" onClick="remove(this)">{{ tr["remove_social_media"] }}</td>';
+      remove.innerHTML = "<td colspan='2' class='center'><button type='button' onClick='remove(this)'>{{ tr['remove_social_media'] }}</td>";
       table.classList.add("wide");
       table.appendChild(name);
       table.appendChild(url);
@@ -70,13 +70,19 @@
     function remove(remove_button) {
       remove_button.parentNode.parentNode.parentNode.parentNode.remove();
     }
+    async function submit_username(form) {
+      const data = new URLSearchParams(new FormData(form));
+      const response = await fetch("/cv/set-username", { method: "post", body: data });
+      const json = await response.json();
+      document.getElementById("username_result").textContent = json['result'];
+    }
   </script>
 {% endblock %}
 {% block content %}
 <div id="content">
-  <form action="/set_username" method="post">
+  <form onSubmit="submit_username(this); return false;">
     {{ csrf|safe }}
-    <p>{{ tr['username'] }}: <input name="username" value="{{ user.username }}"/> <input disabled type="submit" value="{{ tr['claim_username'] }}"/></p>
+    <p>{{ tr['username'] }}: <input name="username" value="{% if user.username %}{{ user.username }}{% endif %}"/> <input type="submit" value="{{ tr['claim_username'] }}"/> <span id="username_result"></span></p>
   </form>
   <form action="/edit" method="post">
     {{ csrf|safe }}

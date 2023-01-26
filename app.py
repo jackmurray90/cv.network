@@ -139,6 +139,20 @@ def edit(render_template, user, tr):
     user.socials
     return render_template('edit.html', user=user)
 
+@post('/cv/set-username')
+def set_username(redirect, user, tr):
+  if not user: return redirect('/')
+  if re.search('[^a-z0-9-]', request.form['username']):
+    return {'result': tr['invalid_username']}
+  with Session(engine) as session:
+    [user] = session.query(User).where(User.id == user.id)
+    try:
+      user.username = request.form['username']
+      session.commit()
+      return {'result': tr['successful_claim'] + request.form['username']}
+    except:
+      return {'result': request.form['username'] + tr['is_taken']}
+
 @post('/cv/edit')
 def edit(redirect, user, tr):
   if not user: return redirect('/')

@@ -2,6 +2,9 @@ tr = {
   'en': {
     'email_address': "E-mail Address",
     'brief': 'Easily put together a CV that can be shared online.',
+    'invalid_username': 'Invalid username. Must contain only lowercase a-z, 0-9, and dash (-).',
+    'is_taken': ' is taken.',
+    'successful_claim': 'Successfully claimed username ',
     'login': "Log In",
     'log_in': 'log in',
     'or': 'or',
