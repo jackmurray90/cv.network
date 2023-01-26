@@ -2,6 +2,56 @@
 {% block head %}
   <script>
     function add_experience() {
+      const ul = document.getElementById('experiences');
+      const li = document.createElement("li");
+      const table = document.createElement("table");
+      const name = document.createElement("tr");
+      const url = document.createElement("tr");
+      const description = document.createElement("tr");
+      const start_month = document.createElement("tr");
+      const end_month = document.createElement("tr");
+      const remove = document.createElement("tr");
+      name.innerHTML = "<th>{{ tr['company'] }}</th><td class='wide'><input class='wide' name='experience_name'/></td>";
+      url.innerHTML = "<th>{{ tr['url'] }}</th><td class='wide'><input class='wide' name='experience_url'/></td>";
+      description.innerHTML = "<th>{{ tr['description'] }}</th><td class='wide'><textarea class='wide' name='experience_description'></textarea></td>";
+      start_month.innerHTML = "<th>{{ tr['start_month'] }}</th><td class='wide'><input name='experience_start'/></td>";
+      end_month.innerHTML = "<th>{{ tr['end_month'] }}</th><td class='wide'><input name='experience_end'/></td>";
+      remove.innerHTML = '<td colspan="2" class="center"><button type="button" onClick="remove(this)">{{ tr["remove_experience"] }}</td>';
+      table.classList.add("wide");
+      table.appendChild(name);
+      table.appendChild(url);
+      table.appendChild(description);
+      table.appendChild(start_month);
+      table.appendChild(end_month);
+      table.appendChild(remove);
+      li.appendChild(table);
+      ul.appendChild(li);
+    }
+    function add_education() {
+      const ul = document.getElementById('educations');
+      const li = document.createElement("li");
+      const table = document.createElement("table");
+      const institution = document.createElement("tr");
+      const qualification = document.createElement("tr");
+      const start_month = document.createElement("tr");
+      const end_month = document.createElement("tr");
+      const remove = document.createElement("tr");
+      institution.innerHTML = "<th>{{ tr['institution'] }}</th><td class='wide'><input class='wide' name='education_institution'/></td>";
+      qualification.innerHTML = "<th>{{ tr['qualification'] }}</th><td class='wide'><input class='wide' name='education_qualification'/></td>";
+      start_month.innerHTML = "<th>{{ tr['start_month'] }}</th><td class='wide'><input name='education_start'/></td>";
+      end_month.innerHTML = "<th>{{ tr['end_month'] }}</th><td class='wide'><input name='education_end'/></td>";
+      remove.innerHTML = '<td colspan="2" class="center"><button type="button" onClick="remove(this)">{{ tr["remove_qualification"] }}</td>';
+      table.classList.add("wide");
+      table.appendChild(institution);
+      table.appendChild(qualification);
+      table.appendChild(start_month);
+      table.appendChild(end_month);
+      table.appendChild(remove);
+      li.appendChild(table);
+      ul.appendChild(li);
+    }
+    function remove(remove_button) {
+      remove_button.parentNode.parentNode.parentNode.parentNode.remove();
     }
   </script>
 {% endblock %}
@@ -18,15 +68,33 @@
     <ul id='experiences'>
       {% for experience in user.experiences %}
         <li>
-          <p>{{ tr['company'] }}: <input name='experience_name' value="{{ experience.name }}"/></p>
-          <p>{{ tr['url'] }}: <input name='experience_url' value="{{ experience.url }}"/></p>
-          <p>{{ tr['description'] }}:<br/><textarea class="wide" name='experience_description'>{{ experience.description }}</textarea></p>
-          <p>{{ tr['start_month'] }}: <input name="experience_start" value="{{ experience.start|render_month }}"/></p>
-          <p>{{ tr['end_month'] }}: <input name="experience_end" value="{{ experience.end|render_month }}"/></p>
+          <table>
+            <tr><th>{{ tr['company'] }}</th><td class='wide'><input class='wide' name='experience_name' value="{{ experience.name }}"/></td></tr>
+            <tr><th>{{ tr['url'] }}</th><td class='wide'><input class='wide' name='experience_url' value="{{ experience.url }}"/></td></tr>
+            <tr><th>{{ tr['description'] }}</th><td class='wide'><textarea class='wide' name='experience_description'>{{ experience.description }}</textarea></td></tr>
+            <tr><th>{{ tr['start_month'] }}</th><td class='wide'><input name='experience_start' value="{{ experience.start|render_month }}"/></td></tr>
+            <tr><th>{{ tr['end_month'] }}</th><td class='wide'><input name='experience_end' value="{{ experience.end|render_month }}"/></td>
+            <tr><td colspan="2" class="center"><button type="button" onClick="remove(this)">{{ tr['remove_experience'] }}</td></tr>
+          </table>
         </li>
       {% endfor %}
     </ul>
     <p><button type="button" onClick="add_experience()">{{ tr['add_experience'] }}</button></p>
+    <h2>{{ tr['education'] }}</h2>
+    <ul id='educations'>
+      {% for education in user.educations %}
+        <li>
+          <table>
+            <tr><th>{{ tr['institution'] }}</th><td class='wide'><input class='wide' name='education_institution' value="{{ education.institution }}"/></td></tr>
+            <tr><th>{{ tr['qualification'] }}</th><td class='wide'><input class='wide' name='education_qualification' value="{{ education.qualification }}"/></td></tr>
+            <tr><th>{{ tr['start_month'] }}</th><td class='wide'><input name='education_start' value="{{ education.start|render_month }}"/></td></tr>
+            <tr><th>{{ tr['end_month'] }}</th><td class='wide'><input name='education_end' value="{{ education.end|render_month }}"/></td>
+            <tr><td colspan="2" class="center"><button type="button" onClick="remove(this)">{{ tr['remove_qualification'] }}</td></tr>
+          </table>
+        </li>
+      {% endfor %}
+    </ul>
+    <p><button type="button" onClick="add_education()">{{ tr['add_qualification'] }}</button></p>
   </form>
 </div>
 {% endblock %}
