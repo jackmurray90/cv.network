@@ -40,9 +40,8 @@ class Social(Base):
   __tablename__ = 'socials'
   id = Column(Integer, primary_key=True)
   user_id = Column(Integer, ForeignKey('users.id'))
-  platform = Column(String)
+  name = Column(String)
   url = Column(String)
-  display_value = Column(String)
 
 class LoginCode(Base):
   __tablename__ = 'login_codes'

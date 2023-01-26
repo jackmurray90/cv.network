@@ -38,7 +38,7 @@
     <h2>{{ tr['socials'] }}</h2>
     <ul>
       {% for social in profile.socials %}
-        <li>{{ social.platform }}: <a href="{{ social.url }}">{{ social.display_value }}</a></li>
+        <li><a href="{{ social.url }}">{{ social.name }}</a></li>
       {% endfor %}
     </ul>
   {% endif %}
