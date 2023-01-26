@@ -444,7 +444,7 @@ def view_profile(render_template, session, profile):
     skills = add_skills(skills, experience.skills)
   for education in profile.educations:
     skills = add_skills(skills, education.skills)
-  return render_template('view.html', profile=profile, skills=skills, profile_picture_exists=isfile(f'static/profile_pictures/{profile.id}'))
+  return render_template('view.html', profile=profile, skills=skills, profile_picture_exists=isfile(f'static/profile_pictures/{profile.id}'), short='short' in request.args)
 
 def log_referrer():
   try:

@@ -23,12 +23,12 @@
     <p><strong>{{ tr['email_address'] }}</strong>: <a href="mailto:{{ profile.email }}">{{ profile.email }}</a></p>
   {% endif %}
 
-  {% if profile.summary %}
+  {% if profile.summary and not short %}
     <h2>{{ tr['summary'] }}</h2>
     <p>{{ profile.summary }}</p>
   {% endif %}
 
-  {% if skills %}
+  {% if skills and not short %}
     <h2>{{ tr['skills'] }}</h2>
     <p class="skills">
       {% for skill in skills %}
@@ -56,14 +56,14 @@
               <br/><small>{{ experience.position }}</small>
             {% endif %}
           </h3>
-          {% if experience.skills %}
+          {% if experience.skills and not short %}
             <p class="skills">
               {% for skill in experience.skills %}
                 <span>{{ skill.name }}</span>
               {% endfor %}
             </p>
           {% endif %}
-          {% if experience.description %}
+          {% if experience.description and not short %}
             <p>{{ experience.description }}</p>
           {% endif %}
         </li>
@@ -88,7 +88,7 @@
             {% endif %}
           </h3>
           <p>{{ education.qualification }}</p>
-          {% if education.skills %}
+          {% if education.skills and not short %}
             <p class="skills">
               {% for skill in education.skills %}
                 <span>{{ skill.name }}</span>

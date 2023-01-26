@@ -40,6 +40,11 @@
     {% else %}
       <a href="/{{ user.id }}">{{ tr['logged_in_as'] }} {{ user.email }}</a>
     {% endif %}
+    {% if user.username %}
+      <a href="/{{ user.username }}?short">{{ tr['view_short'] }}</a>
+    {% else %}
+      <a href="/{{ user.id }}?short">{{ tr['view_short'] }}</a>
+    {% endif %}
     {% if user.admin %}
       <a href="/cv/referrers">{{ tr['referrers'] }}</a>
     {% endif %}
