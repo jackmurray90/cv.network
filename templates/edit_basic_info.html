@@ -34,7 +34,7 @@
     <table>
       <tr><th>{{ tr['name'] }}</th><td class="wide"><input name="name" maxlength="80" value="{{ user.name }}"/></td></tr>
       <tr><th>{{ tr['phone'] }}</th><td class="wide"><input name="phone" maxlength="80" value="{{ user.phone }}"/></td></tr>
-      <tr><th>{{ tr['email'] }}</th><td class="wide">{{ user.email }} <input type="checkbox" name="show_email" value="true"/> {{ tr['show_email'] }}</td></tr>
+      <tr><th>{{ tr['email_address'] }}</th><td class="wide">{{ user.email }} <input type="checkbox" name="show_email" value="true"/> {{ tr['show_email'] }}</td></tr>
     </table>
     <p><input type="submit" value="{{ tr['save_changes'] }}"/></p>
   </form>
