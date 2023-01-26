@@ -24,7 +24,7 @@
       <tr><th>{{ tr['institution'] }}</th><td class='wide'><input class='wide' maxlength="80" name='institution' value="{{ education.institution }}"/></td></tr>
       <tr><th>{{ tr['url'] }}</th><td class='wide'><input class='wide' maxlength="80" name='url' value="{{ education.url }}"/></td></tr>
       <tr><th>{{ tr['qualification'] }}</th><td class='wide'><input class='wide' maxlength="80" name='qualification' value="{{ education.qualification }}"/></td></tr>
-      <tr><th>{{ tr['skills'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='skills'>{{ education.skills|render_skills }}</textarea></td></tr>
+      <tr><th>{{ tr['skills_comma'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='skills'>{{ education.skills|render_skills }}</textarea></td></tr>
       <tr><th>{{ tr['start_month'] }}</th><td class='wide'><input name='start' value="{{ education.start|render_date }}"/></td></tr>
       <tr><th>{{ tr['end_month'] }}</th><td class='wide'><input name='end' value="{{ education.end|render_date }}"/></td>
     </table>

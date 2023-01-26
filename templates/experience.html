@@ -25,7 +25,7 @@
       <tr><th>{{ tr['position'] }}</th><td class='wide'><input class='wide' maxlength="80" name='position' value="{{ experience.position }}"/></td></tr>
       <tr><th>{{ tr['url_optional'] }}</th><td class='wide'><input class='wide' maxlength="80" name='url' value="{{ experience.url }}"/></td></tr>
       <tr><th>{{ tr['description'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='description'>{{ experience.description }}</textarea></td></tr>
-      <tr><th>{{ tr['skills'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='skills'>{{ experience.skills|render_skills }}</textarea></td></tr>
+      <tr><th>{{ tr['skills_comma'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='skills'>{{ experience.skills|render_skills }}</textarea></td></tr>
       <tr><th>{{ tr['start_month'] }}</th><td class='wide'><input name='start' value="{{ experience.start|render_date }}"/></td></tr>
       <tr><th>{{ tr['end_month'] }}</th><td class='wide'><input name='end' value="{{ experience.end|render_date }}"/></td>
     </table>
