@@ -3,11 +3,13 @@
   <script>
     function check_username() {
       const username = document.getElementsByName('username')[0];
-      let result = '';
       if (document.getElementsByName("username")[0].value.match(/[^a-z0-9-]/g) || !document.getElementsByName("username")[0].value.match(/[a-z]/g)) {
-        result = "{{ tr['invalid_username'] }}";
+        document.getElementById('submit').disabled = true;
+        document.getElementById("error").textContent = "{{ tr['invalid_username'] }}";
+      } else {
+        document.getElementById('submit').disabled = false;
+        document.getElementById("error").textContent = '';
       }
-      document.getElementById("username_error").textContent = result;
     }
   </script>
 {% endblock %}
@@ -23,8 +25,8 @@
         <form action="/cv/set-username" method="post">
           {{ csrf|safe }}
           <input name="username" maxlength="30" onKeyUp="check_username()" value="{% if user.username %}{{ user.username }}{% endif %}"/>
-          <input type="submit" value="{{ tr['claim_username'] }}"/>
-          <span id="username_error"></span>
+          <input id="submit" type="submit" value="{{ tr['claim_username'] }}"/>
+          <span id="error"></span>
         </form>
       </td>
     </tr>
