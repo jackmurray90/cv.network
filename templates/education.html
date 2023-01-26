@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block head %}
   <script>
-    document.onload = function() {
+    window.onload = function() {
       jSuites.calendar(document.getElementsByName('start')[0], {
         type: 'year-month-picker',
         format: 'MM/YYYY'
