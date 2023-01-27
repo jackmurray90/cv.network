@@ -8,6 +8,7 @@ from db import User, Experience, Education, SocialMedia, LoginCode, Referrer, Vi
 from time import time
 from mail import send_email
 from os.path import isfile
+from os import system, unlink
 from dateutil.relativedelta import relativedelta
 from datetime import date
 import re
@@ -186,10 +187,19 @@ def set_username(redirect, user, tr):
     except:
       return redirect('/cv/edit-basic-info', request.form['username'] + tr['is_taken'])
 
+@post('/cv/set-profile-picture')
+def set_profile_picture(redirect, user, tr):
+  if not user: return abort(403)
+  temp = random_128_bit_string()
+  request.files['image'].save(f'static/profile_pictures/{temp}')
+  system(f"convert static/profile_pictures/{temp} -resize 128x128 static/profile_pictures/{user.id}.png")
+  unlink(f'static/profile_pictures/{temp}')
+  return {'result': 'success'}
+
 @get('/cv/edit-basic-info')
 def edit_basic_info(render_template, user, tr):
   if not user: return redirect('/')
-  return render_template('edit_basic_info.html')
+  return render_template('edit_basic_info.html', profile_picture_exists=isfile(f'static/profile_pictures/{user.id}.png'))
 
 @post('/cv/edit-basic-info')
 def edit_basic_info(redirect, user, tr):
@@ -455,7 +465,7 @@ def view_profile(render_template, session, profile):
     skills = add_skills(skills, experience.skills)
   for education in profile.educations:
     skills = add_skills(skills, education.skills)
-  return render_template('view.html', profile=profile, skills=skills, profile_picture_exists=isfile(f'static/profile_pictures/{profile.id}'), short='short' in request.args)
+  return render_template('view.html', profile=profile, skills=skills, profile_picture_exists=isfile(f'static/profile_pictures/{profile.id}.png'), short='short' in request.args)
 
 def log_referrer():
   try:
