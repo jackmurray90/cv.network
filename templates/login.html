@@ -7,6 +7,9 @@
   {% endif %}
   {{ csrf|safe }}
   <p><input name="email" placeholder="{{ tr['email_address'] }}"/></p>
+  {% if sign_up %}
+    <p><input name='terms' type='checkbox' value='true'/> {{ tr['agree_terms_1'] }} <a href="/cv/terms-and-conditions">{{ tr['terms_and_conditions'] }}</a> {{ tr['agree_terms_2'] }} <a href="/cv/privacy-policy">{{ tr['privacy_header'] }}</a>.</p>
+  {% endif %}
   <p><input type="submit" value="{% if sign_up %}{{ tr['sign_up'] }}{% else %}{{ tr['login'] }}{% endif %}"/></p>
 </form>
 {% endblock %}

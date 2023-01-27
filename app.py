@@ -74,6 +74,16 @@ def landing_page(render_template, user, tr):
     return redirect(f'/{user.id}')
   return render_template('landing_page.html')
 
+@get('/cv/privacy-policy')
+def privacy(render_template, user, tr):
+  log_referrer()
+  return render_template('privacy_policy.html')
+
+@get('/cv/terms-and-conditions')
+def terms(render_template, user, tr):
+  log_referrer()
+  return render_template('terms.html')
+
 @get('/sitemap.xml')
 def sitemap(render_template, user, tr):
   with Session(engine) as session:
@@ -95,6 +105,7 @@ def sign_up(render_template, user, tr):
 @post('/cv/sign-up')
 def sign_up(redirect, user, tr):
   if user: return redirect('/')
+  if not 'terms' in request.form: return redirect('/cv/sign-up', tr['must_agree'])
   with Session(engine) as session:
     try:
       [user] = session.query(User).where(User.email == request.form['email'])
