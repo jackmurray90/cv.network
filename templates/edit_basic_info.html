@@ -28,6 +28,7 @@
         setTimeout(function() {
           if (cropper) cropper.destroy();
           cropper = new Cropper(document.getElementById('working-profile-picture'), { aspectRatio: 1 / 1 });
+          document.getElementById('second-column').className = 'hide';
           document.getElementById('third-column').className = '';
           document.getElementById('cropper').className = '';
           document.getElementById('crop-button').className = '';
@@ -37,6 +38,8 @@
     }
     function crop() {
       cropper.getCroppedCanvas().toBlob(async function (blob) {
+        document.getElementById('third-column').className = 'hide';
+        document.getElementById('second-column').className = 'center';
         document.getElementById('cropper').className = 'hide';
         document.getElementById('crop-button').className = 'hide';
         if (blob.size > 1024*1024*2) {
@@ -51,7 +54,6 @@
           body: formData
         });
         document.getElementById('profile-picture').src = "/profile_pictures/{{ user.id }}.png?" + new Date().getTime();
-        document.getElementById('message').innerText = '{{ tr["picture_success"] }}';
       });
     }
   </script>
@@ -78,7 +80,7 @@
     <table>
       <tr>
         <th>{{ tr['profile_picture'] }}</th>
-        <td class="center">
+        <td id="second-column" class="center">
           <img id='profile-picture' src="/profile_pictures/{% if profile_picture_exists %}{{ user.id }}{% else %}grey{% endif %}.png"/><br/>
           <input type="file" name="image" id="image" onChange="readURL(this);"/>
         </td>

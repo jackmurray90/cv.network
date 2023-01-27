@@ -18,7 +18,6 @@ tr = {
     'show_email': 'Show e-mail address on CV',
     'profile_picture': 'Profile picture',
     'picture_too_large': 'Image too large. Max size 2MB.',
-    'picture_success': 'Successfully update profile picture.',
     'gpa': "GPA (optional)",
     'invalid_gpa': "Invalid GPA, supports up to 3 decimal places.",
     'browse': "Browse CVs",
