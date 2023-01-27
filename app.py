@@ -174,10 +174,6 @@ def logout(redirect, user, tr):
   response.set_cookie('api_key', '', expires=0)
   return response
 
-@get('/cv/browse')
-def browse(render_template, user, tr):
-  log_referrer()
-
 @post('/cv/set-username')
 def set_username(redirect, user, tr):
   if not user: return redirect('/')
