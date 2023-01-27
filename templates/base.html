@@ -17,6 +17,7 @@
   #nav a { padding: 1em 2em; white-space: nowrap; }
   #nav a, #nav a:hover, #nav a:visited, #nav a:active { color: #9cf; }
   #nav span { padding: 1em 2em; white-space: nowrap; color: #fff; }
+  #nav #nav-header { font-variant: small-caps; letter-spacing: 0.2em; }
   #nav form { margin: 0; display: inline; }
   #nav input { font-family: serif; white-space: nowrap; font-size: 16px; background-color: transparent; border: none; color: #9cf; padding: 0 2em; cursor: pointer; }
   #nav { margin-bottom: 1em; }
@@ -40,7 +41,7 @@
     return check;
   };
   if (mobileCheck()) {
-    const css = '.edit { float: none; margin: 0; } #nav a { display: block; padding: 0; margin: 0.5em; }';
+    const css = '.edit { float: none; margin: 0; } #nav a { display: block; padding: 0; margin: 0.5em; } #box { margin: 1em auto !important; border: none !important; }';
     const head = document.head || document.getElementsByTagName('head')[0];
     const style = document.createElement('style');
 		head.appendChild(style);
@@ -55,6 +56,7 @@
 {% block head %}{% endblock %}
 <title>{% block title %}CV Network{% endblock %}</title>
 <div id="nav">
+  <span id="nav-header">CV Network</span>
   {% if user %}
     <span>{{ tr['logged_in_as'] }} {{ user.email }}</span>
     <a href="/">{{ tr['browse'] }}</a>

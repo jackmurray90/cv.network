@@ -12,6 +12,7 @@ tr = {
     'phone': 'Phone number',
     'open_to_work': 'Currently open to new work opportunities',
     'open_to_work_short': '(open to work)',
+    'profession': 'Profession',
     'logged_in_as': 'Logged in as ',
     'save_changes': 'Save changes',
     'show_email': 'Show e-mail address on CV',

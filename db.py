@@ -15,6 +15,7 @@ class User(Base):
   admin = Column(Boolean, default=False)
   phone = Column(String, default='')
   summary = Column(Text, default='')
+  profession = Column(Text, default='')
   show_email = Column(Boolean, default=False)
   experiences = relationship('Experience', order_by="[desc(Experience.end), desc(Experience.start), desc(Experience.id)]")
   educations = relationship('Education', order_by="[desc(Education.end), desc(Education.start), desc(Education.id)]")
