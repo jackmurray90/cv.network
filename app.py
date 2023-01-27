@@ -3,6 +3,7 @@ from csrf import csrf
 from util import random_128_bit_string
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
+from decimal import Decimal
 from config import DATABASE
 from db import User, Experience, Education, SocialMedia, LoginCode, Referrer, View, Skill
 from time import time
@@ -28,6 +29,10 @@ def convert_date(d):
   if d == '': return None
   month, year = d.split('/')
   return date.fromisoformat(f'{year}-{month}-01')
+
+def convert_gpa(gpa):
+  if gpa == '': return None
+  return Decimal(gpa)
 
 def add_skills(skills, new_skills):
   ret = skills
@@ -331,11 +336,12 @@ def education(redirect, user, tr, id):
   try:
     start = convert_date(request.form['start'])
     end = convert_date(request.form['end'])
+    gpa = convert_gpa(request.form['gpa'])
   except:
     abort(400)
   with Session(engine) as session:
     if id == 'new':
-      education = Education(user_id=user.id, institution=request.form['institution'], url=make_url(request.form['url']), qualification=request.form['qualification'], start=start, end=end)
+      education = Education(user_id=user.id, institution=request.form['institution'], url=make_url(request.form['url']), qualification=request.form['qualification'], gpa=gpa, start=start, end=end)
       session.add(education)
       session.commit()
       for skill_name in request.form['skills'].split(","):
@@ -352,6 +358,7 @@ def education(redirect, user, tr, id):
       education.institution = request.form['institution']
       education.url = request.form['url']
       education.qualification = request.form['qualification']
+      education.gpa = gpa
       education.start = start
       education.end = end
       for skill in education.skills:

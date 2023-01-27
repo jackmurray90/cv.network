@@ -11,6 +11,13 @@
         format: 'MM/YYYY'
       });
     }
+    function check_gpa() {
+      if (!document.getElementsByName('gpa')[0].value.match(/^\d(\.\d{1,3})?$/)) {
+        alert("{{ tr['invalid_gpa'] }}");
+        return false;
+      }
+      return true;
+    }
   </script>
 {% endblock %}
 {% block content %}
@@ -18,12 +25,13 @@
   {% if message %}
     <p>{{ message }}</p>
   {% endif %}
-  <form action="/cv/education/{{ education.id or 'new' }}" method="post">
+  <form action="/cv/education/{{ education.id or 'new' }}" onSubmit="return check_gpa();" method="post">
     {{ csrf|safe }}
     <table>
       <tr><th>{{ tr['institution'] }}</th><td class='wide'><input class='wide' maxlength="80" name='institution' value="{{ education.institution }}"/></td></tr>
       <tr><th>{{ tr['url'] }}</th><td class='wide'><input class='wide' maxlength="80" name='url' value="{{ education.url }}"/></td></tr>
       <tr><th>{{ tr['qualification'] }}</th><td class='wide'><input class='wide' maxlength="80" name='qualification' value="{{ education.qualification }}"/></td></tr>
+      <tr><th>{{ tr['gpa'] }}</th><td class='wide'><input maxlength="5" name='gpa' value="{% if education.gpa %}{{ "%1.3f"%education.gpa }}{% endif %}"/></td></tr>
       <tr><th>{{ tr['skills_comma'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='skills'>{{ education.skills|render_skills }}</textarea></td></tr>
       <tr><th>{{ tr['start_month'] }}</th><td class='wide'><input name='start' value="{{ education.start|render_date }}"/></td></tr>
       <tr><th>{{ tr['end_month'] }}</th><td class='wide'><input name='end' value="{{ education.end|render_date }}"/></td>

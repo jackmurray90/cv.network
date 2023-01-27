@@ -28,6 +28,7 @@
         setTimeout(function() {
           if (cropper) cropper.destroy();
           cropper = new Cropper(document.getElementById('working-profile-picture'), { aspectRatio: 1 / 1 });
+          document.getElementById('third-column').className = '';
           document.getElementById('cropper').className = '';
           document.getElementById('crop-button').className = '';
           document.getElementById('message').innerText = '';
@@ -81,7 +82,7 @@
           <img id='profile-picture' src="/profile_pictures/{% if profile_picture_exists %}{{ user.id }}{% else %}grey{% endif %}.png"/><br/>
           <input type="file" name="image" id="image" onChange="readURL(this);"/>
         </td>
-        <td>
+        <td id='third-column' class="hide">
           <div id='cropper' class='hide'><img id="working-profile-picture" src="#" alt="Profile Picture" /></div>
           <div id='crop-button' class='hide'><p class="center"><button type="button" onClick="crop();">Crop</button></p></div>
           <p id="message"></p>

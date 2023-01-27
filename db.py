@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, Column, String, Text, Boolean, ForeignKey, Date
+from sqlalchemy import Integer, Numeric, Column, String, Text, Boolean, ForeignKey, Date
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
@@ -40,6 +40,7 @@ class Education(Base):
   institution = Column(String, default='')
   url = Column(String, default='')
   qualification = Column(String, default='')
+  gpa = Column(Numeric)
   start = Column(Date)
   end = Column(Date)
   skills = relationship('Skill')
