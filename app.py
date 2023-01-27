@@ -94,6 +94,17 @@ def sitemap(render_template, user, tr):
     response.headers['Content-Type'] = 'text/xml'
     return response
 
+@get('/cv/cordova')
+def cordova(render_template, user, tr):
+  response = make_response(redirect('/'))
+  response.set_cookie('cordova', 'true')
+  return response
+
+@get('/cv/cordova/<code>')
+def cordova(render_template, user, tr, code):
+  if re.search('[^0-9a-zA-Z]', code): abort(400)
+  return f'<!doctype html><script>window.location.href="cvnetwork:{code}";</script>'
+
 @get('/cv/referrers')
 def referrers(render_template, user, tr):
   if not user or not user.admin: return redirect('/')
@@ -121,7 +132,8 @@ def sign_up(redirect, user, tr):
     login_code = LoginCode(user_id=user.id, code=random_128_bit_string(), expiry=int(time()+60*60*2))
     session.add(login_code)
     session.commit()
-    send_email(request.form['email'], tr['verification_email_subject'], render_template('emails/verification.html', tr=tr, code=login_code.code))
+    template = 'emails/verification.html' if not 'cordova' in request.cookies else 'emails/cordova_verification.html'
+    send_email(request.form['email'], tr['verification_email_subject'], render_template(template, tr=tr, code=login_code.code))
     return redirect('/cv/sign-up', tr['verify_your_email'] % request.form['email'])
 
 @get('/cv/login/<code>')
@@ -161,10 +173,12 @@ def login(redirect, user, tr):
     session.add(login_code)
     session.commit()
     if user.email_verified:
-      send_email(request.form['email'], tr['login_email_subject'], render_template('emails/login.html', tr=tr, code=login_code.code))
+      template = 'emails/login.html' if not 'cordova' in request.cookies else 'emails/cordova_login.html'
+      send_email(request.form['email'], tr['login_email_subject'], render_template(template, tr=tr, code=login_code.code))
       return redirect('/cv/login', tr['login_email_sent'])
     else:
-      send_email(request.form['email'], tr['verification_email_subject'], render_template('emails/verification.html', tr=tr, code=login_code.code))
+      template = 'emails/verification.html' if not 'cordova' in request.cookies else 'emails/cordova_verification.html'
+      send_email(request.form['email'], tr['verification_email_subject'], render_template(template, tr=tr, code=login_code.code))
       return redirect('/cv/sign-up', tr['verify_your_email'] % request.form['email'])
 
 @post('/cv/logout')
