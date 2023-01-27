@@ -14,7 +14,8 @@
   .hide { display: none; position: absolute; top: 0; left: 0; visibility: hidden; }
   input, textarea, button { font-family: sans-serif; padding: 0.5em; }
   #nav { padding: 1em 0; margin-top: 0; background-color: #123; text-align: center; }
-  #nav a, #nav a:hover, #nav a:visited, #nav a:active { padding: 1em 2em; white-space: nowrap; color: #9cf; }
+  #nav a { padding: 1em 2em; white-space: nowrap; }
+  #nav a, #nav a:hover, #nav a:visited, #nav a:active { color: #9cf; }
   #nav span { padding: 1em 2em; white-space: nowrap; color: #fff; }
   #nav form { margin: 0; display: inline; }
   #nav input { font-family: serif; white-space: nowrap; font-size: 16px; background-color: transparent; border: none; color: #9cf; padding: 0 2em; cursor: pointer; }
@@ -39,7 +40,7 @@
     return check;
   };
   if (mobileCheck()) {
-    const css = '.edit { float: none; margin: 0; }';
+    const css = '.edit { float: none; margin: 0; } #nav a { display: block; padding: 0; margin: 0.5em; }';
     const head = document.head || document.getElementsByTagName('head')[0];
     const style = document.createElement('style');
 		head.appendChild(style);
@@ -53,9 +54,10 @@
 </script>
 {% block head %}{% endblock %}
 <title>{% block title %}CV Network{% endblock %}</title>
-{% if user %}
-  <div id="nav">
+<div id="nav">
+  {% if user %}
     <span>{{ tr['logged_in_as'] }} {{ user.email }}</span>
+    <a href="/">{{ tr['browse'] }}</a>
     {% if user.username %}
       <a href="/{{ user.username }}">{{ tr['view_cv'] }}</a>
       <a href="/{{ user.username }}?short">{{ tr['view_short'] }}</a>
@@ -70,6 +72,10 @@
       {{ csrf|safe }}
       <input type="submit" value="{{ tr['logout'] }}"/>
     </form>
-  </div>
-{% endif %}
+  {% else %}
+    <a href="/">{{ tr['browse'] }}</a>
+    <a href="/cv/sign-up">{{ tr['sign_up'] }}</a>
+    <a href="/cv/login">{{ tr['login'] }}</a>
+  {% endif %}
+</div>
 {% block content %}{% endblock %}

@@ -74,11 +74,8 @@ def render_skills(skills):
 @get('/')
 def landing_page(render_template, user, tr):
   log_referrer()
-  if user:
-    if user.username:
-      return redirect(f'/{user.username}')
-    return redirect(f'/{user.id}')
-  return render_template('landing_page.html')
+  with Session(engine) as session:
+    return render_template('landing_page.html', profiles=session.query(User).where(User.name != ''))
 
 @get('/cv/privacy-policy')
 def privacy(render_template, user, tr):
@@ -140,7 +137,10 @@ def login(render_template, user, tr, code):
     user.email_verified = True
     session.delete(login_code)
     session.commit()
-    response = make_response(redirect('/'))
+    if user.username:
+      response = make_response(redirect(f'/{user.username}'))
+    else:
+      response = make_response(redirect(f'/{user.id}'))
     response.set_cookie('api_key', user.api_key)
     return response
 
@@ -173,6 +173,10 @@ def logout(redirect, user, tr):
   response = redirect('/')
   response.set_cookie('api_key', '', expires=0)
   return response
+
+@get('/cv/browse')
+def browse(render_template, user, tr):
+  log_referrer()
 
 @post('/cv/set-username')
 def set_username(redirect, user, tr):
