@@ -52,10 +52,10 @@
             {% if user and profile.id == user.id %}
               <a class="edit" href="/cv/experience/{{ experience.id }}">{{ tr['edit_experience'] }}</a>
             {% endif %}
-            {% if experience.position %}
-              <br/><small>{{ experience.position }}</small>
-            {% endif %}
           </h3>
+          {% if experience.position %}
+            <p><strong>{{ experience.position }}</strong></p>
+          {% endif %}
           {% if experience.skills and not short %}
             <p class="skills">
               {% for skill in experience.skills %}
