@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
+{% block head %}
+<style>
+  h1 { font-variant: normal; letter-spacing: normal; }
+  #cvheader { font-variant: small-caps; letter-spacing: 0.2em; }
+</style>
+{% endblock %}
 {% block content %}
 <div id="content">
+  <h1 id="cvheader">CV Network</h1>
   {{ tr['terms']|safe }}
 </div>
 {% endblock %}
