@@ -19,18 +19,18 @@
     <p>{{ message }}</p>
   {% endif %}
   <form action="/cv/experience/{{ experience.id or 'new' }}" method="post">
-    <div class="input-container">
+    <div class="input-container wide">
       {{ csrf|safe }}
       <div class="label">{{ tr['company'] }}</div>
-      <input maxlength="80" name='name' value="{{ experience.name }}"/>
+      <input class="wide" maxlength="80" name='name' value="{{ experience.name }}"/>
     </div>
-    <div class="input-container">
+    <div class="input-container wide">
       <div class="label">{{ tr['position'] }}</div>
-      <input maxlength="80" name='position' value="{{ experience.position }}"/>
+      <input class="wide" maxlength="80" name='position' value="{{ experience.position }}"/>
     </div>
-    <div class="input-container">
+    <div class="input-container wide">
       <div class="label">{{ tr['url_optional'] }}</div>
-      <input maxlength="80" name='url' value="{{ experience.url }}"/>
+      <input class="wide" maxlength="80" name='url' value="{{ experience.url }}"/>
     </div>
     <div class="input-container wide">
       <div class="label">{{ tr['description'] }}</div>
@@ -40,13 +40,13 @@
       <div class="label">{{ tr['skills_comma'] }}</div>
       <textarea class='wide' maxlength="1000" name='skills'>{{ experience.skills|render_skills }}</textarea>
     </div>
-    <div class="input-container">
+    <div class="input-container wide">
       <div class="label">{{ tr['start_month'] }}</div>
-      <input name='start' value="{{ experience.start|render_date }}"/>
+      <input class="wide" name='start' value="{{ experience.start|render_date }}"/>
     </div>
-    <div class="input-container">
+    <div class="input-container wide">
       <div class="label">{{ tr['end_month'] }}</div>
-      <input name='end' value="{{ experience.end|render_date }}"/>
+      <input class="wide" name='end' value="{{ experience.end|render_date }}"/>
     </div>
     <div class="input-container wide">
       <input type="submit" value="{{ tr['save_experience'] }}"/>

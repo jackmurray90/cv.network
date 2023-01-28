@@ -31,7 +31,7 @@
       <div class="label">{{ tr['institution'] }}</div>
       <input class="wide" maxlength="80" name='institution' value="{{ education.institution }}"/>
     </div>
-    <div class="input-contaier wide">
+    <div class="input-container wide">
       <div class="label">{{ tr['url'] }}</div>
       <input class='wide' maxlength="80" name='url' value="{{ education.url }}"/>
     </div>
@@ -39,21 +39,21 @@
       <div class="label">{{ tr['qualification'] }}</div>
       <input class='wide' maxlength="80" name='qualification' value="{{ education.qualification }}"/>
     </div>
-    <div class="input-container">
+    <div class="input-container wide">
       <div class="label">{{ tr['gpa'] }}</div>
-      <input maxlength="5" name='gpa' value="{% if education.gpa %}{{ "%1.3f"%education.gpa }}{% endif %}"/>
+      <input class="wide" maxlength="5" name='gpa' value="{% if education.gpa %}{{ "%1.3f"%education.gpa }}{% endif %}"/>
     </div>
     <div class="input-container wide">
       <div class="label">{{ tr['skills_comma'] }}</div>
       <textarea class='wide' maxlength="1000" name='skills'>{{ education.skills|render_skills }}</textarea>
     </div>
-    <div class="input-container">
+    <div class="input-container wide">
       <div class="label">{{ tr['start_month'] }}</div>
-      <input name='start' value="{{ education.start|render_date }}"/>
+      <input class="wide" name='start' value="{{ education.start|render_date }}"/>
     </div>
-    <div class="input-container">
+    <div class="input-container wide">
       <div class="label">{{ tr['end_month'] }}</div>
-      <input name='end' value="{{ education.end|render_date }}"/>
+      <input class="wide" name='end' value="{{ education.end|render_date }}"/>
     </div>
     <div class="input-container wide">
       <input type="submit" value="{{ tr['save_education'] }}"/>

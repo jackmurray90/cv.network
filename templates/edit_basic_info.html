@@ -59,24 +59,20 @@
   {% if message %}
     <p>{{ message }}</p>
   {% endif %}
-  <table>
-    <tr>
-      <th>{{ tr['username'] }}</th>
-      <td>
-        <form action="/cv/set-username" method="post">
-          {{ csrf|safe }}
-          <input name="username" maxlength="30" onKeyUp="check_username()" value="{% if user.username %}{{ user.username }}{% endif %}"/>
-          <input id="submit" type="submit" value="{{ tr['claim_username'] }}"/>
-          <span id="error"></span>
-        </form>
-      </td>
-    </tr>
-  </table>
+  <form action="/cv/set-username" method="post">
+    <div class="input-container wide">
+      {{ csrf|safe }}
+      <div class="label">{{ tr['username'] }}</div>
+      <input name="username" maxlength="30" onKeyUp="check_username()" value="{% if user.username %}{{ user.username }}{% endif %}"/>
+      <input id="submit" type="submit" value="{{ tr['claim_username'] }}"/>
+    </div>
+    <div id="error"></div>
+  </form>
   <form>
-    <table>
+    <table class="wide">
       <tr>
-        <th>{{ tr['profile_picture'] }}</th>
         <td id="second-column" class="center">
+          <div>{{ tr['profile_picture'] }}<br/>&nbsp;</div>
           <img id='profile-picture' src="/profile_pictures/{% if profile_picture_exists %}{{ user.id }}{% else %}grey{% endif %}.png"/><br/>
           <input type="file" name="image" id="image" onChange="readURL(this);"/>
         </td>
@@ -89,32 +85,32 @@
     </table>
   </form>
   <form id="form" action="/cv/edit-basic-info" method="post">
-    <div class="input-container">
+    <div class="input-container wide">
       {{ csrf|safe }}
       <div class="label">{{ tr['name'] }}</div>
-      <input name="name" maxlength="80" value="{{ user.name }}"/>
+      <input class="wide" name="name" maxlength="80" value="{{ user.name }}"/>
     </div>
-    <div class="input-container">
+    <div class="input-container wide">
       <div class="label">{{ tr['profession'] }}</div>
-      <input name="profession" maxlength="80" value="{{ user.profession }}"/>
+      <input class="wide" name="profession" maxlength="80" value="{{ user.profession }}"/>
     </div>
-    <div class="input-container">
+    <div class="input-container wide">
       <div class="label">{{ tr['phone_optional'] }}</div>
-      <input name="phone" maxlength="80" value="{{ user.phone }}"/>
+      <input class="wide" name="phone" maxlength="80" value="{{ user.phone }}"/>
     </div>
     <div class="input-container wide">
       <div class="label">{{ tr['profile_summary'] }}</div>
       <textarea name="summary" class="wide" maxlength="1000">{{ user.summary }}</textarea>
     </div>
-    <div class="input-container">
+    <div class="input-container wide">
       <div class="label">{{ tr['email_address'] }}</div>
-      <input disabled value="{{ user.email }}">
+      <input class="wide" disabled value="{{ user.email }}">
     </div>
-    <div class="input-container nowrap checkbox">
+    <div class="input-container wide nowrap checkbox">
       <input {% if user.show_email %}checked{% endif %} type="checkbox" name="show_email" value="true"/>
       {{ tr['show_email'] }}
     </div>
-    <div class="input-container nowrap checkbox">
+    <div class="input-container wide nowrap checkbox">
       <input {% if user.open %}checked{% endif %} type="checkbox" name="open" value="true"/>
       {{ tr['open_to_work'] }}
     </div>
