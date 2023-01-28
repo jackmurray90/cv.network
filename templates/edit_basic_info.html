@@ -90,17 +90,35 @@
           <p id="message"></p>
         </td>
       </tr>
+    </table>
   </form>
   <form id="form" action="/cv/edit-basic-info" method="post">
     {{ csrf|safe }}
-    <table class="wide">
-      <tr><th>{{ tr['name'] }}</th><td><input name="name" maxlength="80" value="{{ user.name }}"/></td></tr>
-      <tr><th>{{ tr['profession'] }}</th><td><input name="profession" maxlength="80" value="{{ user.profession }}"/></td></tr>
-      <tr><th>{{ tr['phone_optional'] }}</th><td><input name="phone" maxlength="80" value="{{ user.phone }}"/></td></tr>
-      <tr><th>{{ tr['profile_summary'] }}</th><td class="wide"><textarea name="summary" class="wide" maxlength="1000">{{ user.summary }}</textarea></td></tr>
-      <tr><th>{{ tr['email_address'] }}</th><td>{{ user.email }} <span class="nowrap"><input {% if user.show_email %}checked{% endif %} type="checkbox" name="show_email" value="true"/> {{ tr['show_email'] }}</span></td></tr>
-      <tr><th>{{ tr['open_to_work'] }}</th><td><input {% if user.open %}checked{% endif %} type="checkbox" name="open" value="true"/></td></tr>
-    </table>
+    <div class="input-container">
+      <div class="label">{{ tr['name'] }}</div>
+      <input name="name" maxlength="80" value="{{ user.name }}"/>
+    </div>
+    <div class="input-container">
+      <div class="label">{{ tr['profession'] }}</div>
+      <input name="profession" maxlength="80" value="{{ user.profession }}"/>
+    </div>
+    <div class="input-container">
+      <div class="label">{{ tr['phone_optional'] }}</div>
+      <input name="phone" maxlength="80" value="{{ user.phone }}"/>
+    </div>
+    <div class="input-container">
+      <div class="label">{{ tr['profile_summary'] }}</div>
+      <textarea name="summary" class="wide" maxlength="1000">{{ user.summary }}</textarea>
+    </div>
+    <div class="input-container">
+      <div class="label">{{ tr['email_address'] }}</div>
+      <input disabled value="{{ user.email }}">
+      <span class="nowrap"><input {% if user.show_email %}checked{% endif %} type="checkbox" name="show_email" value="true"/> {{ tr['show_email'] }}</span>
+    </div>
+    <div class="input-container">
+      <input {% if user.open %}checked{% endif %} type="checkbox" name="open" value="true"/>
+      {{ tr['open_to_work'] }}
+    </div>
     <p><input type="submit" value="{{ tr['save_changes'] }}"/></p>
   </form>
   <p><a href="/cv/delete">{{ tr['delete_my_account'] }}</a></p>
