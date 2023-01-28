@@ -19,21 +19,44 @@
     <p>{{ message }}</p>
   {% endif %}
   <form action="/cv/experience/{{ experience.id or 'new' }}" method="post">
-    {{ csrf|safe }}
-    <table>
-      <tr><th>{{ tr['company'] }}</th><td class='wide'><input class='wide' maxlength="80" name='name' value="{{ experience.name }}"/></td></tr>
-      <tr><th>{{ tr['position'] }}</th><td class='wide'><input class='wide' maxlength="80" name='position' value="{{ experience.position }}"/></td></tr>
-      <tr><th>{{ tr['url_optional'] }}</th><td class='wide'><input class='wide' maxlength="80" name='url' value="{{ experience.url }}"/></td></tr>
-      <tr><th>{{ tr['description'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='description'>{{ experience.description }}</textarea></td></tr>
-      <tr><th>{{ tr['skills_comma'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='skills'>{{ experience.skills|render_skills }}</textarea></td></tr>
-      <tr><th>{{ tr['start_month'] }}</th><td class='wide'><input name='start' value="{{ experience.start|render_date }}"/></td></tr>
-      <tr><th>{{ tr['end_month'] }}</th><td class='wide'><input name='end' value="{{ experience.end|render_date }}"/></td>
-    </table>
-    <p><input type="submit" value="{{ tr['save_experience'] }}"/></p>
+    <div class="input-container">
+      {{ csrf|safe }}
+      <div class="label">{{ tr['company'] }}</div>
+      <input maxlength="80" name='name' value="{{ experience.name }}"/>
+    </div>
+    <div class="input-container">
+      <div class="label">{{ tr['position'] }}</div>
+      <input maxlength="80" name='position' value="{{ experience.position }}"/>
+    </div>
+    <div class="input-container">
+      <div class="label">{{ tr['url_optional'] }}</div>
+      <input maxlength="80" name='url' value="{{ experience.url }}"/>
+    </div>
+    <div class="input-container wide">
+      <div class="label">{{ tr['description'] }}</div>
+      <textarea class='wide' maxlength="1000" name='description'>{{ experience.description }}</textarea>
+    </div>
+    <div class="input-container wide">
+      <div class="label">{{ tr['skills_comma'] }}</div>
+      <textarea class='wide' maxlength="1000" name='skills'>{{ experience.skills|render_skills }}</textarea>
+    </div>
+    <div class="input-container">
+      <div class="label">{{ tr['start_month'] }}</div>
+      <input name='start' value="{{ experience.start|render_date }}"/>
+    </div>
+    <div class="input-container">
+      <div class="label">{{ tr['end_month'] }}</div>
+      <input name='end' value="{{ experience.end|render_date }}"/>
+    </div>
+    <div class="input-container wide">
+      <input type="submit" value="{{ tr['save_experience'] }}"/>
+    </div>
+    <div class="input-container wide">
+      <button type="button" onClick="document.getElementById('delete-form').submit();">{{ tr['delete_experience'] }}</div>
+    </div>
   </form>
-  <form id="form" action="/cv/experience/delete/{{ experience.id or 'new' }}" method="post">
+  <form id="delete-form" action="/cv/experience/delete/{{ experience.id or 'new' }}" method="post">
     {{ csrf|safe }}
-    <p><input type="submit" value="{{ tr['delete_experience'] }}"/></p>
   </form>
 </div>
 {% endblock %}

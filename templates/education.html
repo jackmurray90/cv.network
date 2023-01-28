@@ -27,20 +27,43 @@
   {% endif %}
   <form action="/cv/education/{{ education.id or 'new' }}" onSubmit="return check_gpa();" method="post">
     {{ csrf|safe }}
-    <table>
-      <tr><th>{{ tr['institution'] }}</th><td class='wide'><input class='wide' maxlength="80" name='institution' value="{{ education.institution }}"/></td></tr>
-      <tr><th>{{ tr['url'] }}</th><td class='wide'><input class='wide' maxlength="80" name='url' value="{{ education.url }}"/></td></tr>
-      <tr><th>{{ tr['qualification'] }}</th><td class='wide'><input class='wide' maxlength="80" name='qualification' value="{{ education.qualification }}"/></td></tr>
-      <tr><th>{{ tr['gpa'] }}</th><td class='wide'><input maxlength="5" name='gpa' value="{% if education.gpa %}{{ "%1.3f"%education.gpa }}{% endif %}"/></td></tr>
-      <tr><th>{{ tr['skills_comma'] }}</th><td class='wide'><textarea class='wide' maxlength="1000" name='skills'>{{ education.skills|render_skills }}</textarea></td></tr>
-      <tr><th>{{ tr['start_month'] }}</th><td class='wide'><input name='start' value="{{ education.start|render_date }}"/></td></tr>
-      <tr><th>{{ tr['end_month'] }}</th><td class='wide'><input name='end' value="{{ education.end|render_date }}"/></td>
-    </table>
-    <p><input type="submit" value="{{ tr['save_education'] }}"/></p>
+    <div class="input-container wide">
+      <div class="label">{{ tr['institution'] }}</div>
+      <input class="wide" maxlength="80" name='institution' value="{{ education.institution }}"/>
+    </div>
+    <div class="input-contaier wide">
+      <div class="label">{{ tr['url'] }}</div>
+      <input class='wide' maxlength="80" name='url' value="{{ education.url }}"/>
+    </div>
+    <div class="input-container wide">
+      <div class="label">{{ tr['qualification'] }}</div>
+      <input class='wide' maxlength="80" name='qualification' value="{{ education.qualification }}"/>
+    </div>
+    <div class="input-container">
+      <div class="label">{{ tr['gpa'] }}</div>
+      <input maxlength="5" name='gpa' value="{% if education.gpa %}{{ "%1.3f"%education.gpa }}{% endif %}"/>
+    </div>
+    <div class="input-container wide">
+      <div class="label">{{ tr['skills_comma'] }}</div>
+      <textarea class='wide' maxlength="1000" name='skills'>{{ education.skills|render_skills }}</textarea>
+    </div>
+    <div class="input-container">
+      <div class="label">{{ tr['start_month'] }}</div>
+      <input name='start' value="{{ education.start|render_date }}"/>
+    </div>
+    <div class="input-container">
+      <div class="label">{{ tr['end_month'] }}</div>
+      <input name='end' value="{{ education.end|render_date }}"/>
+    </div>
+    <div class="input-container wide">
+      <input type="submit" value="{{ tr['save_education'] }}"/>
+    </div>
+    <div class="input-container wide">
+      <button type="button" onClick="document.getElementById('delete-form').submit();">{{ tr['delete_education'] }}</div>
+    </div>
   </form>
-  <form id="form" action="/cv/education/delete/{{ education.id or 'new' }}" method="post">
+  <form id="delete-form" action="/cv/education/delete/{{ education.id or 'new' }}" method="post">
     {{ csrf|safe }}
-    <p><input type="submit" value="{{ tr['delete_education'] }}"/></p>
   </form>
 </div>
 {% endblock %}
