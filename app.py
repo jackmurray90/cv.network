@@ -90,7 +90,8 @@ def terms(render_template, user, tr):
 @get('/cv/early-signups')
 def terms(render_template, user, tr):
   log_referrer()
-  return render_template('early_signups.html')
+  with Session(engine) as session:
+    return render_template('early_signups.html', verified_users_count=session.query(User).filter(User.early_signup_verified == True).count())
 
 @get('/sitemap.xml')
 def sitemap(render_template, user, tr):
