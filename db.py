@@ -22,6 +22,24 @@ class User(Base):
   social_media = relationship('SocialMedia')
   views = relationship('View')
 
+class Company(Base):
+  __tablename__ = 'companies'
+  id = Column(Integer, primary_key=True)
+  user_id = Column(Integer, ForeignKey('users.id'))
+  name = Column(String, default='')
+  url = Column(String, default='')
+  description = Column(Text, default='')
+
+class Job(Base):
+  __tablename__ = 'jobs'
+  id = Column(Integer, primary_key=True)
+  company_id = Column(Integer, ForeignKey('companies.id'))
+  location = Column(String)
+  job_type = Column(String)
+  description = Column(String)
+  salary_low = Column(Integer)
+  salary_high = Column(Integer)
+
 class Experience(Base):
   __tablename__ = 'experiences'
   id = Column(Integer, primary_key=True)
@@ -51,6 +69,7 @@ class Skill(Base):
   id = Column(Integer, primary_key=True)
   experience_id = Column(Integer, ForeignKey('experiences.id'))
   education_id = Column(Integer, ForeignKey('educations.id'))
+  job_id = Column(Integer, ForeignKey('jobs.id'))
   name = Column(String)
 
 class SocialMedia(Base):
