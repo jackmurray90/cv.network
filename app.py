@@ -87,6 +87,11 @@ def terms(render_template, user, tr):
   log_referrer()
   return render_template('terms.html')
 
+@get('/cv/early-signups')
+def terms(render_template, user, tr):
+  log_referrer()
+  return render_template('early_signups.html')
+
 @get('/sitemap.xml')
 def sitemap(render_template, user, tr):
   with Session(engine) as session:

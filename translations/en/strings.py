@@ -89,6 +89,7 @@ strings = {
   'sign_up': "Sign up",
   'privacy': read('privacy.html'),
   'terms': read('terms.html'),
+  'early_signups': read('early_signups.html'),
   'agree_terms_1': 'By checking this box you agree to our',
   'terms_and_conditions': 'Terms and Conditions',
   'agree_terms_2': 'and our',
