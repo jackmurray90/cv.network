@@ -1,4 +1,4 @@
-from terms_en import terms_en
+from .en.terms import terms_en
 
 tr = {
   'en': {
