@@ -87,14 +87,7 @@ strings = {
   'referrers': "Referrers",
   'logout': "Logout",
   'sign_up': "Sign up",
-  'privacy_header': "Privacy Policy",
-  'privacy': '''
-    Information provided by you for your CV profile is made public, with the
-    exception of your email address which is optionally kept private. We will
-    not use or share your e-mail address for any purpose other than
-    communications from CV Network (for example, the login email, or message
-    notifications about messages received on the platform, etc).''',
-  'all_other_information': "All other information collected about you is kept private by CV Network and is not shared with 3rd parties (for example, IP address, connection times, etc).",
+  'privacy': read('privacy.html'),
   'terms': read('terms.html'),
   'agree_terms_1': 'By checking this box you agree to our',
   'terms_and_conditions': 'Terms and Conditions',

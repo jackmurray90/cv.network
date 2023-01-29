@@ -2,8 +2,6 @@
 {% block content %}
 <div id="content">
   <h1>CV  Network</h1>
-  <h2>{{ tr['privacy_header'] }}</h2>
-  <p>{{ tr['privacy'] }}</p>
-  <p>{{ tr['all_other_information'] }}</p>
+  {{ tr['privacy']|safe }}
 </div>
 {% endblock %}
