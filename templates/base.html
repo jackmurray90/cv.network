@@ -70,7 +70,6 @@
     <a href="/">{{ tr['browse'] }}</a>
     {% if user.username %}
       <a href="/{{ user.username }}">{{ tr['view_cv'] }}</a>
-      <a href="/{{ user.username }}?short">{{ tr['view_short'] }}</a>
     {% else %}
       <a href="/{{ user.id }}">{{ tr['view_cv'] }}</a>
       <a href="/{{ user.id }}?short">{{ tr['view_short'] }}</a>

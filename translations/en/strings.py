@@ -5,8 +5,7 @@ def read(filename):
 
 strings = {
   'email_address': "E-mail Address",
-  'view_short': "View short CV",
-  'view_cv': "View My CV",
+  'view_cv': "My CV",
   'brief': 'Easily put together a CV that can be shared online.',
   'is_taken': ' is taken.',
   'invalid_username': 'Invalid username. Must contain only lowercase a-z, 0-9, and dash (-) and contain at least one letter.',
