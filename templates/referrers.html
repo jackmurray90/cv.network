@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+<div id="content">
   {% if message %}
     <p>{{ message }}</p>
   {% endif %}
@@ -9,4 +10,5 @@
       <tr><td>{{ referrer.hostname }}</td><td>{{ referrer.count }}</td></tr>
     {% endfor %}
   </table>
+</div>
 {% endblock %}

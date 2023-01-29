@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
 <div id="content">
+  {% if user and user.id == profile.id and user.early_signup_verified %}
+    <p>Your profile has been verified for our early signup promotion.</p>
+  {% endif %}
   <h1>
     {% if profile_picture_exists %}
       <img id="profile-picture" src="/profile_pictures/{{ profile.id }}.png"/>
