@@ -87,12 +87,6 @@ def terms(render_template, user, tr):
   log_referrer()
   return render_template('terms.html')
 
-@get('/cv/early-signups')
-def terms(render_template, user, tr):
-  log_referrer()
-  with Session(engine) as session:
-    return render_template('early_signups.html', verified_users_count=session.query(User).filter(User.early_signup_verified == True).count())
-
 @get('/sitemap.xml')
 def sitemap(render_template, user, tr):
   with Session(engine) as session:
@@ -193,20 +187,6 @@ def logout(redirect, user, tr):
   response = redirect('/')
   response.set_cookie('api_key', '', expires=0)
   return response
-
-@post('/cv/early-signup-verify/<id>')
-def early_signup_verify(redirect, user, tr, id):
-  if not user or not user.admin: return redirect('/')
-  with Session(engine) as session:
-    try:
-      [profile] = session.query(User).where(User.id == id)
-    except:
-      abort(404)
-    profile.early_signup_verified = True
-    session.commit()
-    if profile.username:
-      return redirect(f'/{profile.username}')
-    return redirect(f'/{profile.id}')
 
 @post('/cv/set-username')
 def set_username(redirect, user, tr):
