@@ -60,7 +60,7 @@
       <input type="submit" value="{{ tr['save_education'] }}"/>
     </div>
     <div class="input-container">
-      <button type="button" onClick="document.getElementById('delete-form').submit();">{{ tr['delete_education'] }}</div>
+      <input type="button" onClick="document.getElementById('delete-form').submit();" value="{{ tr['delete_education'] }}"/></div>
     </div>
   </form>
   <form id="delete-form" action="/cv/education/delete/{{ education.id or 'new' }}" method="post">

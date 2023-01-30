@@ -52,7 +52,7 @@
       <input type="submit" value="{{ tr['save_experience'] }}"/>
     </div>
     <div class="input-container">
-      <button type="button" onClick="document.getElementById('delete-form').submit();">{{ tr['delete_experience'] }}</div>
+      <input type="button" onClick="document.getElementById('delete-form').submit();" value="{{ tr['delete_experience'] }}"/></div>
     </div>
   </form>
   <form id="delete-form" action="/cv/experience/delete/{{ experience.id or 'new' }}" method="post">

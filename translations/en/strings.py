@@ -81,6 +81,7 @@ strings = {
   'login_email_subject': "Log In to CV Network",
   'login_email_header': 'Log In to CV Network',
   'cordova_to_login': ' using the device CV Network is installed on to log in to CV Network',
+  'crop': 'Crop',
   'to_login': ' to log in to CV Network',
   'login_code_expired': 'Login link expired. Please try logging in again.',
   'referrers': "Referrers",
