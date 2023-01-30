@@ -3,8 +3,7 @@
 <div id="content">
   {% if user and (user.admin or user.id == profile.id) and profile.early_signup_verified %}
     <p>{{ tr['early_signup_verified'] }}</p>
-  {% endif %}
-  {% if user and user.admin %}
+  {% elif user and user.admin %}
     <form action="/cv/early-signup-verify/{{ profile.id }}" method="post">
       {{ csrf|safe }}
       <input type="submit" value="{{ tr['verify_profile'] }}"/>
