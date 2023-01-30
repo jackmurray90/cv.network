@@ -194,6 +194,20 @@ def logout(redirect, user, tr):
   response.set_cookie('api_key', '', expires=0)
   return response
 
+@post('/cv/early-signup-verify/<id>')
+def early_signup_verify(redirect, user, tr, id):
+  if not user or not user.admin: return redirect('/')
+  with Session(engine) as session:
+    try:
+      [profile] = session.query(User).where(User.id == id)
+    except:
+      abort(404)
+    profile.early_signup_verified = True
+    session.commit()
+    if profile.username:
+      return redirect(f'/{profile.username}')
+    return redirect(f'/{profile.id}')
+
 @post('/cv/set-username')
 def set_username(redirect, user, tr):
   if not user: return redirect('/')
