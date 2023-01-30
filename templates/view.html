@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
+{% block head %}
+  <style>
+    td, th { padding: 0; margin: 0; border: none; }
+  </style>
+{% endblock %}
 {% block content %}
 <div id="content">
   {% if user and (user.admin or user.id == profile.id) and profile.early_signup_verified %}
@@ -9,20 +14,40 @@
       <input type="submit" value="{{ tr['verify_profile'] }}"/>
     </form>
   {% endif %}
-  <h1>
-    {% if profile_picture_exists %}
-      <img id="profile-picture" src="/profile_pictures/{{ profile.id }}.png"/>
-    {% endif %}
-    {% if profile.name %}
-      {{ profile.name }}
-    {% else %}
-      {% if user and user.id == profile.id %}
-        {{ tr['your_name_here'] }}
+  {% if profile_picture_exists %}
+    <table>
+      <tr>
+        <td><img id="profile-picture" src="/profile_pictures/{{ profile.id }}.png"/></td>
+        <td class="wide">
+          <h1>
+            {% if profile.name %}
+              {{ profile.name }}
+            {% else %}
+              {% if user and user.id == profile.id %}
+                {{ tr['your_name_here'] }}
+              {% endif %}
+            {% endif %}
+            {% if user and profile.id == user.id %}
+              <a class="edit" href="/cv/edit-basic-info">{{ tr['edit_basic_info'] }}</a>
+            {% endif %}
+          </h1>
+        </td>
+      </tr>
+    </table>
+  {% else %}
+    <h1>
+      {% if profile.name %}
+        {{ profile.name }}
+      {% else %}
+        {% if user and user.id == profile.id %}
+          {{ tr['your_name_here'] }}
+        {% endif %}
       {% endif %}
-    {% endif %}
-    {% if user and profile.id == user.id %}
-      <a class="edit" href="/cv/edit-basic-info">{{ tr['edit_basic_info'] }}</a>
-    {% endif %}
+      {% if user and profile.id == user.id %}
+        <a class="edit" href="/cv/edit-basic-info">{{ tr['edit_basic_info'] }}</a>
+      {% endif %}
+    </h1>
+  {% endif %}
   </h1>
 
   {% if profile.phone %}
