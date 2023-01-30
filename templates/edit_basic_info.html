@@ -60,7 +60,7 @@
     <p>{{ message }}</p>
   {% endif %}
   <form action="/cv/set-username" method="post">
-    <div class="input-container wide">
+    <div class="input-container">
       {{ csrf|safe }}
       <div class="label">{{ tr['username'] }}</div>
       <input name="username" maxlength="30" onKeyUp="check_username()" value="{% if user.username %}{{ user.username }}{% endif %}"/>
@@ -85,36 +85,36 @@
     </table>
   </form>
   <form id="form" action="/cv/edit-basic-info" method="post">
-    <div class="input-container wide">
+    <div class="input-container">
       {{ csrf|safe }}
       <div class="label">{{ tr['name'] }}</div>
       <input class="wide" name="name" maxlength="80" value="{{ user.name }}"/>
     </div>
-    <div class="input-container wide">
+    <div class="input-container">
       <div class="label">{{ tr['profession'] }}</div>
       <input class="wide" name="profession" maxlength="80" value="{{ user.profession }}"/>
     </div>
-    <div class="input-container wide">
+    <div class="input-container">
       <div class="label">{{ tr['phone_optional'] }}</div>
       <input class="wide" name="phone" maxlength="80" value="{{ user.phone }}"/>
     </div>
-    <div class="input-container wide">
+    <div class="input-container">
       <div class="label">{{ tr['profile_summary'] }}</div>
       <textarea name="summary" class="wide" maxlength="1000">{{ user.summary }}</textarea>
     </div>
-    <div class="input-container wide">
+    <div class="input-container">
       <div class="label">{{ tr['email_address'] }}</div>
       <input class="wide" disabled value="{{ user.email }}">
     </div>
-    <div class="input-container wide nowrap checkbox">
+    <div class="input-container checkbox">
       <input {% if user.show_email %}checked{% endif %} type="checkbox" name="show_email" value="true"/>
       {{ tr['show_email'] }}
     </div>
-    <div class="input-container wide nowrap checkbox">
+    <div class="input-container checkbox">
       <input {% if user.open %}checked{% endif %} type="checkbox" name="open" value="true"/>
       {{ tr['open_to_work'] }}
     </div>
-    <div class="input-container wide">
+    <div class="input-container">
       <input type="submit" value="{{ tr['save_changes'] }}"/>
     </div>
   </form>

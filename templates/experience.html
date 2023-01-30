@@ -19,39 +19,39 @@
     <p>{{ message }}</p>
   {% endif %}
   <form action="/cv/experience/{{ experience.id or 'new' }}" method="post">
-    <div class="input-container wide">
+    <div class="input-container">
       {{ csrf|safe }}
       <div class="label">{{ tr['company'] }}</div>
       <input class="wide" maxlength="80" name='name' value="{{ experience.name }}"/>
     </div>
-    <div class="input-container wide">
+    <div class="input-container">
       <div class="label">{{ tr['position'] }}</div>
       <input class="wide" maxlength="80" name='position' value="{{ experience.position }}"/>
     </div>
-    <div class="input-container wide">
+    <div class="input-container">
       <div class="label">{{ tr['url_optional'] }}</div>
       <input class="wide" maxlength="80" name='url' value="{{ experience.url }}"/>
     </div>
-    <div class="input-container wide">
+    <div class="input-container">
       <div class="label">{{ tr['description'] }}</div>
       <textarea class='wide' maxlength="1000" name='description'>{{ experience.description }}</textarea>
     </div>
-    <div class="input-container wide">
+    <div class="input-container">
       <div class="label">{{ tr['skills_comma'] }}</div>
       <textarea class='wide' maxlength="1000" name='skills'>{{ experience.skills|render_skills }}</textarea>
     </div>
-    <div class="input-container wide">
+    <div class="input-container">
       <div class="label">{{ tr['start_month'] }}</div>
       <input class="wide" name='start' value="{{ experience.start|render_date }}"/>
     </div>
-    <div class="input-container wide">
+    <div class="input-container">
       <div class="label">{{ tr['end_month'] }}</div>
       <input class="wide" name='end' value="{{ experience.end|render_date }}"/>
     </div>
-    <div class="input-container wide">
+    <div class="input-container">
       <input type="submit" value="{{ tr['save_experience'] }}"/>
     </div>
-    <div class="input-container wide">
+    <div class="input-container">
       <button type="button" onClick="document.getElementById('delete-form').submit();">{{ tr['delete_experience'] }}</div>
     </div>
   </form>
