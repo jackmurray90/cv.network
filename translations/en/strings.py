@@ -66,7 +66,7 @@ strings = {
   'delete_education': "Remove this qualification/degree",
   'add_social_media': "Add a new media link",
   'save_social_media': "Save social media links",
-  'delete_social_media': "Delete this social media link",
+  'delete_social_media': "Delete",
   'verification_email_subject': 'Verify your e-mail.',
   'verify_your_email': 'Please verify your e-mail by clicking the link we sent to %s.',
   'verification_email_header': 'Welcome to CV Network',

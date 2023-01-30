@@ -8,8 +8,9 @@
     function add_social_media() {
       const table = document.getElementById('social_media');
       const tr = document.createElement("tr");
-      tr.innerHTML = "<td><input class='wide' maxlength='80' name='name'/></td>" +
-          "<td><input class='wide' maxlength='80' name='url'/></td>" +
+      tr.innerHTML =
+          "<td><div class='input-container'><div class='label'>{{ tr['platform_name'] }}</div><input class='wide' maxlength='80' name='name'/></div>" +
+          "<div class='input-container'><div class='label'>{{ tr['url'] }}</div><input class='wide' maxlength='80' name='url'/></div></td>" +
           "<td><input type='button' onClick='remove(this);' value='{{ tr['delete_social_media'] }}'/></td>";
       table.appendChild(tr);
     }
@@ -26,11 +27,18 @@
   <form id="form" action="/cv/social-media" method="post">
     {{ csrf|safe }}
     <table class="wide" id='social_media'>
-      <tr><th>{{ tr['platform_name'] }}</th><th>{{ tr['url'] }}</th><th>Delete</th></tr>
       {% for social in user.social_media %}
         <tr>
-          <td><input class="wide" maxlength="80" name='name' value="{{ social.name }}"/></td>
-          <td><input class='wide' maxlength="80" name='url' value="{{ social.url }}"/></td>
+          <td class="wide">
+            <div class="input-container">
+              <div class="label">{{ tr['platform_name'] }}</div>
+              <input class="wide" maxlength="80" name='name' value="{{ social.name }}"/>
+            </div>
+            <div class="input-container">
+              <div class="label">{{ tr['url'] }}</div>
+              <input class='wide' maxlength="80" name='url' value="{{ social.url }}"/>
+            </div>
+          </td>
           <td><input type="button" onClick="remove(this);" value="{{ tr['delete_social_media'] }}"/></td>
         </tr>
       {% endfor %}
