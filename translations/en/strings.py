@@ -87,6 +87,7 @@ strings = {
   'referrers': "Referrers",
   'logout': "Logout",
   'sign_up': "Sign up",
+  'privacy_policy': 'Privacy Policy',
   'privacy': read('privacy.html'),
   'terms': read('terms.html'),
   'early_signups': read('early_signups.html'),
