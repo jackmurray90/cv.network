@@ -12,7 +12,8 @@
       });
     }
     function check_gpa() {
-      if (!document.getElementsByName('gpa')[0].value.match(/^\d(\.\d{1,3})?$/)) {
+      const gpa = document.getElementsByName('gpa')[0].value;
+      if (gpa && !gpa.match(/^\d(\.\d{1,3})?$/)) {
         alert("{{ tr['invalid_gpa'] }}");
         return false;
       }
