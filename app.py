@@ -75,7 +75,7 @@ def render_skills(skills):
 def landing_page(render_template, user, tr):
   log_referrer()
   with Session(engine) as session:
-    return render_template('landing_page.html', profiles=session.query(User).where(User.name != ''))
+    return render_template('landing_page.html', profiles=session.query(User).where(User.name != '').order_by(User.id.asc()))
 
 @get('/cv/privacy-policy')
 def privacy(render_template, user, tr):
