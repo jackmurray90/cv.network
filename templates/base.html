@@ -12,10 +12,12 @@
   .center { text-align: center; }
   .wide { width: 100%; }
   .hide { display: none; position: absolute; top: 0; left: 0; visibility: hidden; }
-  input, textarea, button { font-family: sans-serif; padding: 1em; }
+  input, textarea { font-family: sans-serif; padding: 1em; }
   textarea { height: 5em; }
   .checkbox { padding: 0.66em; border: 1px solid grey; white-space: nowrap; }
   .input-container { position: relative; margin: 1em 0; }
+  .input-container input, .input-container textarea { width: 100%; }
+  .input-container input[type=submit], .input-container input[type=button], .input-container input[type=checkbox], .input-container input.short { width: auto; }
   .label { position: absolute; top: -0.5em; left: 0.5em; background-color: #fff; z-index: 1; padding: 0 0.5em; font-size: small; color: grey; }
   #working-profile-picture { display: block; max-width: 10em; max-height: 10em; }
   #nav { padding: 1em 0; margin-top: 0; background-color: #123; text-align: center; }

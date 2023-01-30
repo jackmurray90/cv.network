@@ -10,8 +10,8 @@
       const table = document.getElementById('social_media');
       const tr = document.createElement("tr");
       tr.innerHTML =
-          "<td><div class='input-container'><div class='label'>{{ tr['platform_name'] }}</div><input class='wide' maxlength='80' name='name'/></div>" +
-          "<div class='input-container'><div class='label'>{{ tr['url'] }}</div><input class='wide' maxlength='80' name='url'/></div></td>" +
+          "<td><div class='input-container'><div class='label'>{{ tr['platform_name'] }}</div><input maxlength='80' name='name'/></div>" +
+          "<div class='input-container'><div class='label'>{{ tr['url'] }}</div><input maxlength='80' name='url'/></div></td>" +
           "<td><input type='button' onClick='remove(this);' value='{{ tr['delete_social_media'] }}'/></td>";
       table.appendChild(tr);
     }
@@ -33,11 +33,11 @@
           <td class="wide">
             <div class="input-container">
               <div class="label">{{ tr['platform_name'] }}</div>
-              <input class="wide" maxlength="80" name='name' value="{{ social.name }}"/>
+              <input maxlength="80" name='name' value="{{ social.name }}"/>
             </div>
             <div class="input-container">
               <div class="label">{{ tr['url'] }}</div>
-              <input class='wide' maxlength="80" name='url' value="{{ social.url }}"/>
+              <input maxlength="80" name='url' value="{{ social.url }}"/>
             </div>
           </td>
           <td><input type="button" onClick="remove(this);" value="{{ tr['delete_social_media'] }}"/></td>
