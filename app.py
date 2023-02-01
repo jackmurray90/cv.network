@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from decimal import Decimal
 from config import DATABASE
-from db import User, Experience, Education, SocialMedia, LoginCode, Referrer, View, Skill
+from db import User, Experience, Education, SocialMedia, LoginCode, Referrer, View, Skill, Award, Class
 from time import time
 from mail import send_email
 from os.path import isfile
@@ -68,8 +68,8 @@ def render_date(date):
   return '%04d-%02d-%02d' % (date.year, date.month, date.day)
 
 @app.template_filter()
-def render_skills(skills):
-  return ', '.join([s.name for s in skills])
+def render_names(data, separator=', '):
+  return separator.join([d.name for d in data])
 
 @get('/')
 def landing_page(render_template, user, tr):
@@ -349,6 +349,8 @@ def education(redirect, user, tr, id):
   if len(request.form['url']) > 80: abort(400)
   if len(request.form['qualification']) > 80: abort(400)
   if len(request.form['skills']) > 1000: abort(400)
+  if len(request.form['classes']) > 1000: abort(400)
+  if len(request.form['awards']) > 1000: abort(400)
   try:
     start = convert_date(request.form['start'])
     end = convert_date(request.form['end'])
@@ -363,6 +365,12 @@ def education(redirect, user, tr, id):
       for skill_name in request.form['skills'].split(","):
         if skill_name.strip():
           session.add(Skill(education_id=education.id, name=skill_name.strip()))
+      for class_name in request.form['classes'].split(","):
+        if class_name.strip():
+          session.add(Class(education_id=education.id, name=class_name.strip()))
+      for award_name in request.form['awards'].replace('\r\n', '\n').split("\n"):
+        if award_name.strip():
+          session.add(Award(education_id=education.id, name=award_name.strip()))
       session.commit()
     else:
       try:
@@ -379,16 +387,26 @@ def education(redirect, user, tr, id):
       education.end = end
       for skill in education.skills:
         session.delete(skill)
+      for class_ in education.classes:
+        session.delete(class_)
+      for award in education.awards:
+        session.delete(award)
       for skill_name in request.form['skills'].split(","):
         if skill_name.strip():
           session.add(Skill(education_id=education.id, name=skill_name.strip()))
+      for class_name in request.form['classes'].split(","):
+        if class_name.strip():
+          session.add(Class(education_id=education.id, name=class_name.strip()))
+      for award_name in request.form['awards'].replace('\r\n', '\n').split("\n"):
+        if award_name.strip():
+          session.add(Award(education_id=education.id, name=award_name.strip()))
       session.commit()
     if user.username:
       return redirect(f'/{user.username}')
     return redirect(f'/{user.id}')
 
 @post('/cv/education/delete/<id>')
-def education(redirect, user, tr, id):
+def delete_education(redirect, user, tr, id):
   if not user: return redirect('/')
   if id != 'new':
     with Session(engine) as session:
@@ -400,6 +418,10 @@ def education(redirect, user, tr, id):
         abort(403)
       for skill in education.skills:
         session.delete(skill)
+      for class_ in education.classes:
+        session.delete(class_)
+      for award in education.awards:
+        session.delete(award)
       session.delete(education)
       session.commit()
   if user.username:

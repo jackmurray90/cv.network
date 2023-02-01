@@ -125,6 +125,22 @@
               {% endfor %}
             </p>
           {% endif %}
+          {% if education.classes and not short %}
+            <h4>{{ tr['classes'] }}</h4>
+            <p class="classes">
+              {% for class_ in education.classes %}
+                <span>{{ class_.name }}</span>
+              {% endfor %}
+            </p>
+          {% endif %}
+          {% if education.awards and not short %}
+            <h4>{{ tr['awards'] }}</h4>
+            <ul>
+              {% for award in education.awards %}
+                <li>{{ award.name }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
         </li>
       {% endfor %}
     </ul>

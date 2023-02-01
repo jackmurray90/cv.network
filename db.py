@@ -63,6 +63,20 @@ class Education(Base):
   start = Column(Date)
   end = Column(Date)
   skills = relationship('Skill')
+  awards = relationship('Award')
+  classes = relationship('Class')
+
+class Award(Base):
+  __tablename__ = 'awards'
+  id = Column(Integer, primary_key=True)
+  education_id = Column(Integer, ForeignKey('educations.id'))
+  name = Column(String, default='')
+
+class Class(Base):
+  __tablename__ = 'classes'
+  id = Column(Integer, primary_key=True)
+  education_id = Column(Integer, ForeignKey('educations.id'))
+  name = Column(String, default='')
 
 class Skill(Base):
   __tablename__ = 'skills'

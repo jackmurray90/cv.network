@@ -46,7 +46,15 @@
     </div>
     <div class="input-container">
       <div class="label">{{ tr['skills_comma'] }}</div>
-      <textarea maxlength="1000" name='skills'>{{ education.skills|render_skills }}</textarea>
+      <textarea maxlength="1000" name='skills'>{{ education.skills|render_names }}</textarea>
+    </div>
+    <div class="input-container">
+      <div class="label">{{ tr['classes_comma'] }}</div>
+      <textarea maxlength="1000" name='classes'>{{ education.classes|render_names }}</textarea>
+    </div>
+    <div class="input-container">
+      <div class="label">{{ tr['awards_comma'] }}</div>
+      <textarea maxlength="1000" name='awards'>{{ education.awards|render_names('\n') }}</textarea>
     </div>
     <div class="input-container">
       <div class="label">{{ tr['start_month'] }}</div>
