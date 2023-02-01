@@ -60,6 +60,8 @@ def calculate_duration_in_months(experience, tr):
     components.append(f'1 {tr["month"]}')
   elif delta.months > 1:
     components.append(f'{delta.months} {tr["months"]}')
+  if len(components) == 0:
+    components.append(tr["future"])
   return f'({" ".join(components)})'
 
 @app.template_filter()

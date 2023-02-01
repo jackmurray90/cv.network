@@ -28,6 +28,7 @@ strings = {
   'classes_comma': "Classes/Projects (comma separated)",
   'awards': "Awards/Scholarships",
   'classes': "Classes/Projects",
+  'future': "Future",
   'edit_basic_info': "Edit basic info",
   'edit_experience': "Edit this work experience",
   'new_experience': "Add a new work experience",
