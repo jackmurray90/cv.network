@@ -45,6 +45,8 @@ def add_skills(skills, new_skills):
 def calculate_duration_in_months(experience, tr):
   if not experience.start:
     return ''
+  if experience.start > date.today():
+    return f"({tr['future']})"
   end = experience.end if experience.end else date.today()
   delta = relativedelta(end, experience.start)
   delta.months += 1
@@ -60,8 +62,6 @@ def calculate_duration_in_months(experience, tr):
     components.append(f'1 {tr["month"]}')
   elif delta.months > 1:
     components.append(f'{delta.months} {tr["months"]}')
-  if len(components) == 0:
-    components.append(tr["future"])
   return f'({" ".join(components)})'
 
 @app.template_filter()
