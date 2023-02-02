@@ -98,7 +98,5 @@ strings = {
   'agree_terms_1': 'By checking this box you agree to our',
   'terms_and_conditions': 'Terms and Conditions',
   'agree_terms_2': 'and our',
-  'must_agree': 'You must agree to our Terms and Conditions and Privacy Policy before signing up.',
-  'early_signup_verified': 'Your profile has been verified for our early signup promotion.',
-  'verify_profile': 'Verify profile for early sign up promotion'
+  'must_agree': 'You must agree to our Terms and Conditions and Privacy Policy before signing up.'
 }
