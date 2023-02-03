@@ -20,7 +20,9 @@ class User(Base):
   experiences = relationship('Experience', order_by="[desc(Experience.end), desc(Experience.start), desc(Experience.id)]")
   educations = relationship('Education', order_by="[desc(Education.end), desc(Education.start), desc(Education.id)]")
   social_media = relationship('SocialMedia')
+  companies = relationship('Company')
   views = relationship('View')
+  login_codes = relationship('LoginCode')
 
 class Company(Base):
   __tablename__ = 'companies'

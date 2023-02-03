@@ -464,6 +464,10 @@ def delete(redirect, user, tr):
   if not user: return redirect('/')
   with Session(engine) as session:
     [user] = session.query(User).where(User.id == user.id)
+    for company in user.companies:
+      for job in company.jobs:
+        session.delete(job)
+      session.delete(company)
     for experience in user.experiences:
       for skill in experience.skills:
         session.delete(skill)
@@ -471,11 +475,17 @@ def delete(redirect, user, tr):
     for education in user.educations:
       for skill in education.skills:
         session.delete(skill)
+      for award in education.awards:
+        session.delete(award)
+      for class_ in education.classes:
+        session.delete(class_)
       session.delete(education)
     for social_media in user.social_media:
       session.delete(social_media)
     for view in user.views:
       session.delete(view)
+    for login_code in user.login_codes:
+      session.delete(login_code)
     session.delete(user)
     session.commit()
     return redirect('/')
