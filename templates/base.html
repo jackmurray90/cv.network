@@ -20,13 +20,14 @@
   .input-container input[type=submit], .input-container input[type=button], .input-container input[type=checkbox], .input-container input.short { width: auto; }
   .label { position: absolute; top: -0.5em; left: 0.5em; background-color: #fff; z-index: 1; padding: 0 0.5em; font-size: small; color: grey; }
   #working-profile-picture { display: block; max-width: 10em; max-height: 10em; }
-  #nav { padding: 1em 0; margin-top: 0; background-color: #123; text-align: center; }
-  #nav a { padding: 1em 2em; white-space: nowrap; }
+  #nav { background-color: #123; text-align: center; }
+  #nav a { display: inline-block; padding: 1em 2em; white-space: nowrap; }
   #nav a, #nav a:hover, #nav a:visited, #nav a:active { color: #9cf; }
   #nav span { padding: 1em 2em; white-space: nowrap; color: #fff; }
   #nav #nav-header { font-family: serif; font-variant: small-caps; letter-spacing: 0.2em; }
-  #nav form { margin: 0; display: inline; }
-  #nav input { font-family: serif; white-space: nowrap; font-size: 16px; background-color: transparent; border: none; color: #9cf; padding: 0 2em; cursor: pointer; }
+  #nav #nav-header img { margin: 1em 0; vertical-align: middle; }
+  #nav form { margin: 0; display: inline-block; }
+  #nav input { display: inline-block; font-family: serif; white-space: nowrap; font-size: 16px; background-color: transparent; border: none; color: #9cf; padding: 1em 2em; cursor: pointer; }
   #nav { margin-bottom: 1em; }
   .skills span, .classes span { padding: 0.2em; display: inline-block; margin: 0.2em; border-radius: 0.2em; background-color: #eeeef3; color: #555; border: #ccc; white-space: nowrap; }
   .classes span { background-color: #f3eeee; }
@@ -64,9 +65,8 @@
 {% block head %}{% endblock %}
 <title>{% block title %}CV Network{% endblock %}</title>
 <div id="nav">
-  <span id="nav-header">CV Network</span>
+  <span id="nav-header"><img src="/logo.png" width="40px"/> CV Network</span>
   {% if user %}
-    <span>{{ tr['logged_in_as'] }} {{ user.email }}</span>
     <a href="/">{{ tr['browse'] }}</a>
     {% if user.username %}
       <a href="/{{ user.username }}">{{ tr['view_cv'] }}</a>

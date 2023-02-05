@@ -70,7 +70,7 @@
         <li>
           <h3>
             {% if experience.url %}
-              <a href="{{ experience.url }}">{{ experience.name }}</a>
+              <a href="{{ experience.url }}" target="_blank" rel="noopener noreferrer">{{ experience.name }}</a>
             {% else %}
               {{ experience.name }}
             {% endif %}
@@ -104,7 +104,7 @@
         <li>
           <h3>
             {% if education.url %}
-              <a href="{{ education.url }}">{{ education.institution }}</a>
+              <a href="{{ education.url }}" target="_blank" rel="noopener noreferrer">{{ education.institution }}</a>
             {% else %}
               {{ education.institution }}
             {% endif %}
@@ -149,7 +149,7 @@
     <h2>{{ tr['social_media'] }} {% if user and user.id == profile.id %}<a class="edit" href="/cv/social-media">{{ tr['edit_social_media'] }}{% endif %}</h2>
     <ul>
       {% for social_media in profile.social_media %}
-        <li><a href="{{ social_media.url }}">{{ social_media.name }}</a></li>
+        <li><a href="{{ social_media.url }}" target="_blank" rel="noopener noreferrer">{{ social_media.name }}</a></li>
       {% endfor %}
     </ul>
   {% endif %}

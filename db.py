@@ -100,7 +100,7 @@ class LoginCode(Base):
   code = Column(String, primary_key=True)
   user_id = Column(Integer, ForeignKey('users.id'))
   expiry = Column(Integer)
-  user = relationship('User')
+  user = relationship('User', back_populates='login_codes')
 
 class Referrer(Base):
   __tablename__ = 'referrers'
