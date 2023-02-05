@@ -18,6 +18,9 @@ app = Flask(__name__)
 engine = create_engine(DATABASE)
 get, post = csrf(app, engine)
 
+def valid_email(email):
+  return re.match("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])", email)
+
 def make_url(url):
   url = url.strip()
   if not url: return url
@@ -122,6 +125,7 @@ def sign_up(render_template, user, tr):
 def sign_up(redirect, user, tr):
   if user: return redirect('/')
   if not 'terms' in request.form: return redirect('/cv/sign-up', tr['must_agree'])
+  if not valid_email(request.form['email'].strip().lower()): return redirect('/cv/sign-up', tr['invalid_email'])
   with Session(engine) as session:
     try:
       [user] = session.query(User).where(User.email == request.form['email'].strip().lower())
@@ -166,6 +170,7 @@ def login(render_template, user, tr):
 @post('/cv/login')
 def login(redirect, user, tr):
   if user: return redirect('/')
+  if not valid_email(request.form['email'].strip().lower()): return redirect('/cv/login', tr['invalid_email'])
   with Session(engine) as session:
     try:
       [user] = session.query(User).where(User.email == request.form['email'].strip().lower())

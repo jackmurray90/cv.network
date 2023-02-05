@@ -39,6 +39,7 @@ strings = {
   'no_get_me_out': "No, I want to keep my account.",
   'profile_summary': 'Profile summary',
   'summary': 'Summary',
+  'invalid_email': 'Invalid email',
   'edit_education': "Edit this qualification/degree",
   'edit_social_media': "Edit social media",
   'successful_claim': 'Successfully claimed username ',
