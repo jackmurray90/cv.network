@@ -102,7 +102,7 @@ def sitemap(render_template, user, tr):
 @get('/cv/cordova')
 def cordova(render_template, user, tr):
   response = make_response(redirect('/'))
-  response.set_cookie('cordova', 'true')
+  response.set_cookie('cordova', 'true', samesite='Lax', secure=True)
   return response
 
 @get('/cv/cordova/<code>')
@@ -159,7 +159,7 @@ def login(render_template, user, tr, code):
       response = make_response(redirect(f'/{user.username}'))
     else:
       response = make_response(redirect(f'/{user.id}'))
-    response.set_cookie('api_key', user.api_key)
+    response.set_cookie('api_key', user.api_key, samesite='Lax', secure=True)
     return response
 
 @get('/cv/login')
@@ -192,7 +192,7 @@ def login(redirect, user, tr):
 def logout(redirect, user, tr):
   if not user: return redirect('/')
   response = redirect('/')
-  response.set_cookie('api_key', '', expires=0)
+  response.set_cookie('api_key', '', expires=int(time())+5, samesite='Lax', secure=True)
   return response
 
 @post('/cv/set-username')
