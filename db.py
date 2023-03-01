@@ -52,6 +52,7 @@ class Experience(Base):
   description = Column(Text, default='')
   start = Column(Date)
   end = Column(Date)
+  visible = Column(Boolean, default=True)
   skills = relationship('Skill')
 
 class Education(Base):

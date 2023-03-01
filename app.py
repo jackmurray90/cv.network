@@ -9,9 +9,10 @@ from db import User, Experience, Education, SocialMedia, LoginCode, Referrer, Vi
 from time import time, sleep
 from mail import send_email
 from os.path import isfile
-from os import system, unlink
+from os import system, unlink, getcwd
 from dateutil.relativedelta import relativedelta
 from datetime import date
+import pdfkit
 import re
 
 app = Flask(__name__)
@@ -278,11 +279,10 @@ def experience(redirect, user, tr, id):
     start = convert_date(request.form['start'])
     end = convert_date(request.form['end'])
   except:
-    print("aborting")
     abort(400)
   with Session(engine) as session:
     if id == 'new':
-      experience = Experience(user_id=user.id, name=request.form['name'], position=request.form['position'], url=make_url(request.form['url']), description=request.form['description'], start=start, end=end)
+      experience = Experience(user_id=user.id, name=request.form['name'], position=request.form['position'], url=make_url(request.form['url']), description=request.form['description'], start=start, end=end, visible='visible' in request.form)
       session.add(experience)
       session.commit()
       for skill_name in request.form['skills'].split(","):
@@ -302,6 +302,7 @@ def experience(redirect, user, tr, id):
       experience.description = request.form['description']
       experience.start = start
       experience.end = end
+      experience.visible = 'visible' in request.form
       for skill in experience.skills:
         session.delete(skill)
       for skill_name in request.form['skills'].split(","):
@@ -500,6 +501,33 @@ def delete(redirect, user, tr):
         sleep(1)
     return redirect('/')
 
+@get('/<int:id>.pdf')
+def view(render_template, user, tr, id):
+  log_referrer()
+  with Session(engine) as session:
+    try:
+      [profile] = session.query(User).where(User.id == id)
+    except:
+      abort(404)
+    return view_pdf(render_template, session, profile)
+
+@get('/<username>.pdf')
+def view(render_template, user, tr, username):
+  log_referrer()
+  with Session(engine) as session:
+    try:
+      [profile] = session.query(User).where(User.username == username)
+    except:
+      abort(404)
+    return view_pdf(render_template, session, profile)
+
+def view_pdf(render_template, session, profile):
+  pdf = pdfkit.from_string(view_profile(render_template, session, profile, plain=True).data.decode('utf-8'), False, options={"enable-local-file-access": ""})
+  response = make_response(pdf)
+  response.headers['Content-Type'] = 'application/pdf'
+  response.headers['Content-Disposition'] = 'inline; filename=cv.pdf'
+  return response
+
 @get('/<int:id>')
 def view(render_template, user, tr, id):
   log_referrer()
@@ -520,7 +548,7 @@ def view(render_template, user, tr, username):
       abort(404)
     return view_profile(render_template, session, profile)
 
-def view_profile(render_template, session, profile):
+def view_profile(render_template, session, profile, plain=False):
   view = session.query(View).filter((View.user_id == profile.id) & (View.remote_address == request.remote_addr)).first()
   if view is None:
     view = View(user_id=profile.id, remote_address=request.remote_addr, timestamp=0)
@@ -532,7 +560,8 @@ def view_profile(render_template, session, profile):
     skills = add_skills(skills, experience.skills)
   for education in profile.educations:
     skills = add_skills(skills, education.skills)
-  return render_template('view.html', profile=profile, skills=skills, profile_picture_exists=isfile(f'static/profile_pictures/{profile.id}.png'), short='short' in request.args)
+  kwargs = {'user': None} if plain else {}
+  return render_template('view.html', no_nav=plain, static_dir=f'{getcwd()}/static' if plain else '', profile=profile, skills=skills, profile_picture_exists=isfile(f'static/profile_pictures/{profile.id}.png'), short='short' in request.args, **kwargs)
 
 def log_referrer():
   try:

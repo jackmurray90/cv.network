@@ -9,7 +9,7 @@
   {% if profile_picture_exists %}
     <table>
       <tr>
-        <td><img id="profile-picture" src="/profile_pictures/{{ profile.id }}.png"/></td>
+        <td><img id="profile-picture" src="{{ static_dir }}/profile_pictures/{{ profile.id }}.png"/></td>
         <td class="wide">
           <h1>
             {% if profile.name %}
@@ -67,32 +67,37 @@
     <h2>{{ tr['experience'] }} {% if user and user.id == profile.id %}<a class="edit" href="/cv/experience/new">{{ tr['new_experience'] }}</a>{% endif %}</h2>
     <ul>
       {% for experience in profile.experiences %}
-        <li>
-          <h3>
-            {% if experience.url %}
-              <a href="{{ experience.url }}" target="_blank" rel="noopener noreferrer">{{ experience.name }}</a>
-            {% else %}
-              {{ experience.name }}
+        {% if experience.visible or (user and user.id == profile.id) %}
+          <li>
+            <h3>
+              {% if experience.url %}
+                <a href="{{ experience.url }}" target="_blank" rel="noopener noreferrer">{{ experience.name }}</a>
+              {% else %}
+                {{ experience.name }}
+              {% endif %}
+              {{ experience|calculate_duration_in_months(tr) }}
+              {% if user and profile.id == user.id %}
+                <a class="edit" href="/cv/experience/{{ experience.id }}">{{ tr['edit_experience'] }}</a>
+              {% endif %}
+            </h3>
+            {% if not experience.visible %}
+              <p>{{ tr['hidden'] }}</p>
             {% endif %}
-            {{ experience|calculate_duration_in_months(tr) }}
-            {% if user and profile.id == user.id %}
-              <a class="edit" href="/cv/experience/{{ experience.id }}">{{ tr['edit_experience'] }}</a>
+            {% if experience.position %}
+              <p><strong>{{ experience.position }}</strong></p>
             {% endif %}
-          </h3>
-          {% if experience.position %}
-            <p><strong>{{ experience.position }}</strong></p>
-          {% endif %}
-          {% if experience.skills and not short %}
-            <p class="skills">
-              {% for skill in experience.skills %}
-                <span>{{ skill.name }}</span>
-              {% endfor %}
-            </p>
-          {% endif %}
-          {% if experience.description and not short %}
-            <p>{{ experience.description }}</p>
-          {% endif %}
-        </li>
+            {% if experience.skills and not short %}
+              <p class="skills">
+                {% for skill in experience.skills %}
+                  <span>{{ skill.name }}</span>
+                {% endfor %}
+              </p>
+            {% endif %}
+            {% if experience.description and not short %}
+              <p>{{ experience.description }}</p>
+            {% endif %}
+          </li>
+        {% endif %}
       {% endfor %}
     </ul>
   {% endif %}

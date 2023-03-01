@@ -48,6 +48,10 @@
       <div class="label">{{ tr['end_month'] }}</div>
       <input name='end' value="{{ experience.end|render_date }}"/>
     </div>
+    <div class="input-container checkbox">
+      <input {% if experience.visible %}checked{% endif %} type="checkbox" name="visible" value="true"/>
+      {{ tr['visible'] }}
+    </div>
     <div class="input-container">
       <input type="submit" value="{{ tr['save_experience'] }}"/>
     </div>

@@ -40,6 +40,8 @@ strings = {
   'profile_summary': 'Profile summary',
   'summary': 'Summary',
   'invalid_email': 'Invalid email',
+  'visible': 'Visible',
+  'hidden': '(Hidden)',
   'edit_education': "Edit this qualification/degree",
   'edit_social_media': "Edit social media",
   'successful_claim': 'Successfully claimed username ',

@@ -64,26 +64,28 @@
 </script>
 {% block head %}{% endblock %}
 <title>{% block title %}CV Network{% endblock %}</title>
-<div id="nav">
-  <span id="nav-header"><img src="/logo.png" width="40px"/> CV Network</span>
-  {% if user %}
-    <a href="/">{{ tr['browse'] }}</a>
-    {% if user.username %}
-      <a href="/{{ user.username }}">{{ tr['view_cv'] }}</a>
+{% if not no_nav %}
+  <div id="nav">
+    <span id="nav-header"><img src="/logo.png" width="40px"/> CV Network</span>
+    {% if user %}
+      <a href="/">{{ tr['browse'] }}</a>
+      {% if user.username %}
+        <a href="/{{ user.username }}">{{ tr['view_cv'] }}</a>
+      {% else %}
+        <a href="/{{ user.id }}">{{ tr['view_cv'] }}</a>
+      {% endif %}
+      {% if user.admin %}
+        <a href="/cv/referrers">{{ tr['referrers'] }}</a>
+      {% endif %}
+      <form action="/cv/logout" method="post">
+        {{ csrf|safe }}
+        <input type="submit" value="{{ tr['logout'] }}"/>
+      </form>
     {% else %}
-      <a href="/{{ user.id }}">{{ tr['view_cv'] }}</a>
+      <a href="/">{{ tr['browse'] }}</a>
+      <a href="/cv/sign-up">{{ tr['sign_up'] }}</a>
+      <a href="/cv/login">{{ tr['login'] }}</a>
     {% endif %}
-    {% if user.admin %}
-      <a href="/cv/referrers">{{ tr['referrers'] }}</a>
-    {% endif %}
-    <form action="/cv/logout" method="post">
-      {{ csrf|safe }}
-      <input type="submit" value="{{ tr['logout'] }}"/>
-    </form>
-  {% else %}
-    <a href="/">{{ tr['browse'] }}</a>
-    <a href="/cv/sign-up">{{ tr['sign_up'] }}</a>
-    <a href="/cv/login">{{ tr['login'] }}</a>
-  {% endif %}
-</div>
+  </div>
+{% endif %}
 {% block content %}{% endblock %}
